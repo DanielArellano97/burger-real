@@ -7,7 +7,7 @@ public record MetodoPago (
     Long id,
     String nombre,
     BigDecimal porcentajeComision,
-    BigDecimal comisionFija,
+    Long comisionFija,
     boolean estaActivo
 ){
 }

@@ -1,14 +1,15 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.adapter;
 
 import com.burgerreal.burger_gestion.domain.model.Venta;
 import com.burgerreal.burger_gestion.domain.port.out.VentaRepositoryPort;
-import lombok.RequiredArgsConstructor;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.VentaEntity;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.VentaMapper;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.repository.JpaVentaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class VentaPersistenceAdapter implements VentaRepositoryPort {
 
     private final JpaVentaRepository jpaVentaRepository;

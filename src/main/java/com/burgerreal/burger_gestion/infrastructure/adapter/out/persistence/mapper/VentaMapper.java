@@ -1,11 +1,18 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper;
 
-import com.burgerreal.burger_gestion.domain.model.MetodoPago;
 import com.burgerreal.burger_gestion.domain.model.Venta;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.MetodoPagoEntity;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.VentaEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VentaMapper {
+
+    private final MetodoPagoMapper metodoPagoMapper;
+
+    public VentaMapper(MetodoPagoMapper metodoPagoMapper) {
+        this.metodoPagoMapper = metodoPagoMapper;
+    }
 
     /**
      * De Record (Dominio) a Entity (Base de Datos)
@@ -15,7 +22,7 @@ public class VentaMapper {
 
         // Obtenemos el MetodoPagoEntity (podría ser null)
         MetodoPagoEntity metodoPagoEntity = (domain.metodoPago() != null)
-                ? toMetodoPagoEntity(domain.metodoPago())
+                ? metodoPagoMapper.mapearAEntity(domain.metodoPago())
                 : null;
 
         // Usamos una evaluación explícita para decidir qué constructor usar
@@ -55,29 +62,7 @@ public class VentaMapper {
                 entity.getCostoTotalInsumos(),
                 entity.getComisionPasarela(),
                 entity.getGananciaNeta(),
-                toMetodoPagoDomain(entity.getMetodoPago())
-        );
-    }
-
-    // Métodos auxiliares para el Metodo de Pago
-    private MetodoPagoEntity toMetodoPagoEntity(MetodoPago domain) {
-        MetodoPagoEntity entity = new MetodoPagoEntity();
-        entity.setId(domain.id());
-        entity.setNombre(domain.nombre());
-        entity.setPorcentajeComision(domain.porcentajeComision());
-        entity.setComisionFija(domain.comisionFija());
-        entity.setEstaActivo(domain.estaActivo());
-        return entity;
-    }
-
-    private MetodoPago toMetodoPagoDomain(MetodoPagoEntity entity) {
-        if (entity == null) return null;
-        return new MetodoPago(
-                entity.getId(),
-                entity.getNombre(),
-                entity.getPorcentajeComision(),
-                entity.getComisionFija(),
-                entity.isEstaActivo()
+                metodoPagoMapper.mapearADominio(entity.getMetodoPago())
         );
     }
 }

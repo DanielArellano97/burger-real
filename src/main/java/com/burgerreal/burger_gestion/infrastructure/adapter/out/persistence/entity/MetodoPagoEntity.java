@@ -1,9 +1,12 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
+@NoArgsConstructor
 @Table(name = "metodos_pago")
 public class MetodoPagoEntity {
 
@@ -18,10 +21,27 @@ public class MetodoPagoEntity {
     private BigDecimal porcentajeComision;
 
     @Column(name = "comision_fija", precision = 10, scale = 2)
-    private BigDecimal comisionFija;
+    private Long comisionFija;
 
     @Column(name = "esta_activo")
     private boolean estaActivo;
+
+    //Constructor para insertar
+    public MetodoPagoEntity(String nombre, BigDecimal porcentajeComision, Long comisionFija) {
+        this.nombre = nombre;
+        this.porcentajeComision = porcentajeComision;
+        this.comisionFija = comisionFija;
+        this.estaActivo = true;
+    }
+
+    //Constructor para consultar
+    public MetodoPagoEntity(Long id, String nombre, BigDecimal porcentajeComision, Long comisionFija, boolean estaActivo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.porcentajeComision = porcentajeComision;
+        this.comisionFija = comisionFija;
+        this.estaActivo = estaActivo;
+    }
 
     public Long getId() {
         return id;
@@ -47,11 +67,11 @@ public class MetodoPagoEntity {
         this.porcentajeComision = porcentajeComision;
     }
 
-    public BigDecimal getComisionFija() {
+    public Long getComisionFija() {
         return comisionFija;
     }
 
-    public void setComisionFija(BigDecimal comisionFija) {
+    public void setComisionFija(Long comisionFija) {
         this.comisionFija = comisionFija;
     }
 
