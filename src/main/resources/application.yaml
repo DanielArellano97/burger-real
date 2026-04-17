@@ -1,3 +1,17 @@
 spring:
   application:
     name: burger-gestion
+  datasource:
+      url: jdbc:postgresql://localhost:5432/burger_real
+      username: admin
+      password: password123
+      driver-class-name: org.postgresql.Driver # Opcional, pero ayuda a evitar errores de carga
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Esto creará las tablas automáticamente en tu DB de Docker
+    show-sql: true # Para que veas en la consola los INSERT que hace Burger Real
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect # Optimiza las consultas para Postgres
+        format_sql: true # Hace que el SQL en consola sea fácil de leer
