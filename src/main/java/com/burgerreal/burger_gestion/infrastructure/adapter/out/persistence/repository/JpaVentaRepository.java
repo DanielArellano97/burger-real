@@ -1,5 +1,6 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.repository;
 
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.VentaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
