@@ -1,14 +1,13 @@
-package com.burgerreal.burger_gestion.application.service;
+package com.burgerreal.burger_gestion.application.service.venta;
 
-import com.burgerreal.burger_gestion.application.port.in.RegistrarVentaUseCase;
+import com.burgerreal.burger_gestion.application.port.in.venta.RegistrarVentaUseCase;
 import com.burgerreal.burger_gestion.domain.model.MetodoPago;
 import com.burgerreal.burger_gestion.domain.model.Venta;
 import com.burgerreal.burger_gestion.domain.port.out.MetodoPagoRepositoryPort;
 import com.burgerreal.burger_gestion.domain.port.out.VentaRepositoryPort;
 import com.burgerreal.burger_gestion.domain.services.CalculoVentaService;
+import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.CrearVentaRequest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 public class RegistrarVentaService implements RegistrarVentaUseCase {
 
@@ -23,22 +22,14 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
     }
 
     @Override
-    @Transactional // Si algo falla al guardar, se hace rollback automático
-    public Venta ejecutar(Long montoBruto, Long costos, Long metodoPagoId) {
-        MetodoPago metodoPago = metodoPagoRepositoryPort.buscarPorId(metodoPagoId).orElseThrow(() -> new RuntimeException("Metodo de pago no encontrado con ID:" + metodoPagoId));
+    @Transactional
+    public Venta ejecutar(CrearVentaRequest crearVentaRequest) {
+        MetodoPago metodoPago = metodoPagoRepositoryPort.buscarPorId(crearVentaRequest.metodoPagoId()).orElseThrow(() -> new RuntimeException("Metodo de pago no encontrado con ID:" + crearVentaRequest.metodoPagoId()));
 
-        long comision = calculoVentaService.calcularComision(montoBruto,metodoPago);
-        long neto = calculoVentaService.calcularGananciaNeta(montoBruto, costos, comision);
+        long comision = calculoVentaService.calcularComision(crearVentaRequest.montoBruto(),metodoPago);
+        long neto = calculoVentaService.calcularGananciaNeta(crearVentaRequest.montoBruto(), crearVentaRequest.costoInsumos(), comision);
 
-        Venta nuevaVenta = new Venta(
-                null,
-                null,
-                montoBruto,
-                costos,
-                comision,
-                neto,
-                metodoPago
-        );
+        Venta nuevaVenta = Venta.nuevaVenta(comision,neto, crearVentaRequest, metodoPago);
 
         return ventaRepositoryPort.guardar(nuevaVenta);
     }

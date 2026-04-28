@@ -37,4 +37,14 @@ public class CalculoVentaService {
     public Long calcularGananciaNeta(Long bruto, Long costos, Long comision) {
         return bruto - comision - costos;
     }
+
+    /**
+     * Calcula la multa del 10% para el staff por el tiempo invertido.
+     */
+    public Long calcularMultaStaff(Long montoBruto) {
+        return BigDecimal.valueOf(montoBruto)
+                .multiply(new BigDecimal("0.10"))
+                .setScale(0, RoundingMode.HALF_UP)
+                .longValue();
+    }
 }
