@@ -1,5 +1,6 @@
 package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity;
 
+import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,14 @@ public class VentaEntity {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime fecha;
 
+    @Column(name = "fecha_inicio_cocina", columnDefinition = "TIMESTAMP(0)")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime fechaInicioCocina;
+
+    @Column(name = "fecha_entrega_cliente", columnDefinition = "TIMESTAMP(0)")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime fechaEntregaCliente;
+
     @Column(name = "monto_total_bruto", precision = 12, scale = 2)
     private Long montoTotalBruto;
 
@@ -30,31 +39,51 @@ public class VentaEntity {
     @Column(name = "ganancia_neta", precision = 12, scale = 2)
     private Long gananciaNeta;
 
-    // Aquí está la corrección: Ya no es un String, ahora es una relación profesional
+    @Column(name = "pago_confirmado", nullable = false)
+    private boolean pagoConfirmado;
+
+    @Column(name = "cargo_por_anulacion_cocina")
+    private Long cargoPorAnulacionCocina;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoVenta estado;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "metodo_pago_id")
     private MetodoPagoEntity metodoPago;
 
     //constructor para insertar en bdd
-    public VentaEntity(Long montoTotalBruto, Long costoTotalInsumos,
-                       Long comisionPasarela, Long gananciaNeta, MetodoPagoEntity metodoPago) {
+    public VentaEntity(LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, Long montoTotalBruto, Long costoTotalInsumos,
+                       Long comisionPasarela, Long gananciaNeta, boolean pagoConfirmado, EstadoVenta estado, MetodoPagoEntity metodoPago) {
+        this.fechaInicioCocina = fechaInicioCocina;
+        this.fechaEntregaCliente = fechaEntregaCliente;
         this.montoTotalBruto = montoTotalBruto;
         this.costoTotalInsumos = costoTotalInsumos;
         this.comisionPasarela = comisionPasarela;
         this.gananciaNeta = gananciaNeta;
+        this.pagoConfirmado = pagoConfirmado;
+        this.cargoPorAnulacionCocina = 0L;
+        this.estado = estado;
         this.metodoPago = metodoPago;
     }
 
     //constructor para obtener desde bdd
-    public VentaEntity(Long id, LocalDateTime fecha, Long montoTotalBruto, Long costoTotalInsumos,
-                       Long comisionPasarela, Long gananciaNeta, MetodoPagoEntity metodoPago) {
+    public VentaEntity(Long id, LocalDateTime fecha, LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, Long montoTotalBruto, Long costoTotalInsumos,
+                       Long comisionPasarela, Long gananciaNeta, boolean pagoConfirmado, Long cargoPorAnulacionCocina, EstadoVenta estado, MetodoPagoEntity metodoPago) {
         this.id = id;
         this.fecha = fecha;
+        this.fechaInicioCocina = fechaInicioCocina;
+        this.fechaEntregaCliente = fechaEntregaCliente;
         this.montoTotalBruto = montoTotalBruto;
         this.costoTotalInsumos = costoTotalInsumos;
         this.comisionPasarela = comisionPasarela;
         this.gananciaNeta = gananciaNeta;
+        this.pagoConfirmado = pagoConfirmado;
+        this.cargoPorAnulacionCocina = cargoPorAnulacionCocina;
+        this.estado = estado;
         this.metodoPago = metodoPago;
+
     }
 
     public Long getId() {
@@ -111,6 +140,46 @@ public class VentaEntity {
 
     public void setMetodoPago(MetodoPagoEntity metodoPago) {
         this.metodoPago = metodoPago;
+    }
+
+    public EstadoVenta getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoVenta estado) {
+        this.estado = estado;
+    }
+
+    public boolean isPagoConfirmado() {
+        return pagoConfirmado;
+    }
+
+    public void setPagoConfirmado(boolean pagoConfirmado) {
+        this.pagoConfirmado = pagoConfirmado;
+    }
+
+    public LocalDateTime getFechaInicioCocina() {
+        return fechaInicioCocina;
+    }
+
+    public void setFechaInicioCocina(LocalDateTime fechaInicioCocina) {
+        this.fechaInicioCocina = fechaInicioCocina;
+    }
+
+    public LocalDateTime getFechaEntregaCliente() {
+        return fechaEntregaCliente;
+    }
+
+    public void setFechaEntregaCliente(LocalDateTime fechaEntregaCliente) {
+        this.fechaEntregaCliente = fechaEntregaCliente;
+    }
+
+    public Long getCargoPorAnulacionCocina() {
+        return cargoPorAnulacionCocina;
+    }
+
+    public void setCargoPorAnulacionCocina(Long cargoPorAnulacion) {
+        this.cargoPorAnulacionCocina = cargoPorAnulacion;
     }
 
     @PrePersist
