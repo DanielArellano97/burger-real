@@ -1,12 +1,12 @@
-package com.burgerreal.burger_gestion.domain.model;
+package com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.metodo_pago;
 
 import java.math.BigDecimal;
 
-public record MetodoPago (
+public record MetodoPagoDetalleResponse(
     Long id,
     String nombre,
     BigDecimal porcentajeComision,
     Long comisionFija,
     boolean estaActivo
-){
+) {
 }
