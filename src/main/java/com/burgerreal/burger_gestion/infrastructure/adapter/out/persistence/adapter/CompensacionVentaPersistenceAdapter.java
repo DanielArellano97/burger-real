@@ -3,7 +3,7 @@ package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.ada
 import com.burgerreal.burger_gestion.domain.model.CompensacionVenta;
 import com.burgerreal.burger_gestion.domain.port.out.CompensacionVentaRepositoryPort;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.CompensacionVentaEntity;
-import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.compensacion_venta.CompensacionMapper;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.CompensacionMapper;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.repository.JpaCompensacionVentaRepository;
 import org.springframework.stereotype.Component;
 

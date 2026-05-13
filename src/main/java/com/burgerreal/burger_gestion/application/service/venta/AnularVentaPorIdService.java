@@ -9,6 +9,8 @@ import com.burgerreal.burger_gestion.domain.services.CalculoVentaService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 public class AnularVentaPorIdService implements AnularVentaPorIdUseCase {
 
     private final VentaRepositoryPort ventaRepositoryPort;
@@ -29,17 +31,20 @@ public class AnularVentaPorIdService implements AnularVentaPorIdUseCase {
         Venta venta = ventaRepositoryPort.buscarPorId(ventaId)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no existe"));
 
-        //2. Calculamos las comisiones
-        long comisionCocinero = venta.fechaInicioCocina() != null
+        // 2. Calculamos las comisiones/multas usando BigDecimal
+        // Para el cocinero (ajusta calcularMultaStaff para que devuelva BigDecimal)
+        BigDecimal comisionCocinero = venta.fechaInicioCocina() != null
                 ? calculoVentaService.calcularMultaStaff(venta.montoTotalBruto())
-                : 0;
-        long comisionTransbank = venta.pagoConfirmado()
+                : BigDecimal.ZERO;
+
+        // Para la pasarela de pago
+        BigDecimal comisionTransbank = venta.pagoConfirmado()
                 ? calculoVentaService.calcularComision(venta.montoTotalBruto(), venta.metodoPago())
-                : 0;
+                : BigDecimal.ZERO;
 
         //3. Ejecutamos logica de negocio (dominio)
         //   Creamos la compensacion de la venta y anulamos dicha venta.
-        Venta ventaAnulada = venta.anular();
+        Venta ventaAnulada = venta.anular(comisionCocinero);
         CompensacionVenta compensacionVenta = CompensacionVenta.nuevaCompensacionVentaAnulada(ventaAnulada, motivo, comisionCocinero, comisionTransbank);
 
         //4. Persistir (aplicacion)

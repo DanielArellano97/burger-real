@@ -2,7 +2,7 @@ package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.ada
 
 import com.burgerreal.burger_gestion.domain.model.MetodoPago;
 import com.burgerreal.burger_gestion.domain.port.out.MetodoPagoRepositoryPort;
-import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.metodoPago.MetodoPagoMapper;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.MetodoPagoMapper;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.repository.JpaMetodoPagoRepository;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +31,6 @@ public class MetodoPagoPersistenceAdapter implements MetodoPagoRepositoryPort {
         return jpaMetodoPagoRepository.findByEstaActivoTrue()
                 .stream()
                 .map(metodoPagoMapper::mapearADominio)
-                .toList(); // Usando el toList() moderno que acordamos antes
+                .toList();
     }
 }

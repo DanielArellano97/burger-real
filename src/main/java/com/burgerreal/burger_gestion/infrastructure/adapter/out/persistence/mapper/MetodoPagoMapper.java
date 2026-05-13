@@ -1,4 +1,4 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.metodoPago;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper;
 
 import com.burgerreal.burger_gestion.domain.model.MetodoPago;
 import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.metodo_pago.MetodoPagoDetalleParaVentaResponse;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Component;
 public class MetodoPagoMapper {
 
     // Métodos auxiliares para el Metodo de Pago
-    public MetodoPagoEntity mapearAEntity(MetodoPago domain) {
-        if (domain == null) return null;
+    public MetodoPagoEntity mapearAEntity(MetodoPago dominio) {
+        if (dominio == null) return null;
 
         return new MetodoPagoEntity(
-                domain.id(),
-                domain.nombre(),
-                domain.porcentajeComision(),
-                domain.comisionFija(),
-                domain.estaActivo()
+                dominio.id(),
+                dominio.nombre(),
+                dominio.porcentajeComision(),
+                dominio.comisionFija(),
+                dominio.estaActivo()
         );
     }
 

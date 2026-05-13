@@ -3,6 +3,7 @@ package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.ent
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,20 +19,20 @@ public class CompensacionVentaEntity {
     @JoinColumn(name = "venta_id", nullable = false)
     private VentaEntity venta;
 
-    @Column(name = "costo_insumos")
-    private Long costoInsumos;
+    @Column(precision = 12, scale = 4)
+    private BigDecimal costoInsumos;
 
-    @Column(name = "comision_cocina")
-    private Long comisionCocina;
+    @Column(precision = 12, scale = 4)
+    private BigDecimal comisionCocina;
 
-    @Column(name = "comision_transbank")
-    private Long comisionTransbank;
+    @Column(precision = 12, scale = 4)
+    private BigDecimal comisionTransbank;
 
-    @Column(name = "monto_total_retenido")
-    private Long montoTotalRetenido;
+    @Column(precision = 12, scale = 4)
+    private BigDecimal montoTotalRetenido;
 
-    @Column(name = "monto_reembolsado")
-    private Long montoReembolsado;
+    @Column(precision = 12, scale = 4)
+    private BigDecimal montoReembolsado;
 
     private String observacion;
 
@@ -39,8 +40,8 @@ public class CompensacionVentaEntity {
     private LocalDateTime fechaRegistro;
 
     //constructor para insercion
-    public CompensacionVentaEntity(Long costoInsumos, Long comisionCocina, Long comisionTransbank,
-                                   Long montoTotalRetenido, Long montoReembolsado, String observacion,
+    public CompensacionVentaEntity(BigDecimal costoInsumos, BigDecimal comisionCocina, BigDecimal comisionTransbank,
+                                   BigDecimal montoTotalRetenido, BigDecimal montoReembolsado, String observacion,
                                    LocalDateTime fechaRegistro) {
         this.costoInsumos = costoInsumos;
         this.comisionCocina = comisionCocina;
@@ -52,8 +53,8 @@ public class CompensacionVentaEntity {
     }
 
     //constructor para obtener
-    public CompensacionVentaEntity(Long id, VentaEntity venta, Long costoInsumos, Long comisionCocina,
-                                   Long comisionTransbank, Long montoTotalRetenido, Long montoReembolsado,
+    public CompensacionVentaEntity(Long id, VentaEntity venta, BigDecimal costoInsumos, BigDecimal comisionCocina,
+                                   BigDecimal comisionTransbank, BigDecimal montoTotalRetenido, BigDecimal montoReembolsado,
                                    String observacion, LocalDateTime fechaRegistro) {
         this.id = id;
         this.venta = venta;
@@ -82,43 +83,43 @@ public class CompensacionVentaEntity {
         this.venta = venta;
     }
 
-    public Long getCostoInsumos() {
+    public BigDecimal getCostoInsumos() {
         return costoInsumos;
     }
 
-    public void setCostoInsumos(Long costoInsumos) {
+    public void setCostoInsumos(BigDecimal costoInsumos) {
         this.costoInsumos = costoInsumos;
     }
 
-    public Long getComisionCocina() {
+    public BigDecimal getComisionCocina() {
         return comisionCocina;
     }
 
-    public void setComisionCocina(Long comisionCocina) {
+    public void setComisionCocina(BigDecimal comisionCocina) {
         this.comisionCocina = comisionCocina;
     }
 
-    public Long getComisionTransbank() {
+    public BigDecimal getComisionTransbank() {
         return comisionTransbank;
     }
 
-    public void setComisionTransbank(Long comisionTransbank) {
+    public void setComisionTransbank(BigDecimal comisionTransbank) {
         this.comisionTransbank = comisionTransbank;
     }
 
-    public Long getMontoTotalRetenido() {
+    public BigDecimal getMontoTotalRetenido() {
         return montoTotalRetenido;
     }
 
-    public void setMontoTotalRetenido(Long montoTotalRetenido) {
+    public void setMontoTotalRetenido(BigDecimal montoTotalRetenido) {
         this.montoTotalRetenido = montoTotalRetenido;
     }
 
-    public Long getMontoReembolsado() {
+    public BigDecimal getMontoReembolsado() {
         return montoReembolsado;
     }
 
-    public void setMontoReembolsado(Long montoReembolsado) {
+    public void setMontoReembolsado(BigDecimal montoReembolsado) {
         this.montoReembolsado = montoReembolsado;
     }
 
