@@ -1,10 +1,11 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.in.web;
+package com.burgerreal.burger_gestion.infrastructure.adapter.in.web.controller;
 
 import com.burgerreal.burger_gestion.application.port.in.venta.*;
 import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
+import com.burgerreal.burger_gestion.domain.model.ReporteVentas;
 import com.burgerreal.burger_gestion.domain.model.Venta;
 import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.*;
-import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.venta.VentaMapper;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.VentaMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("api/ventas")
+@RequestMapping("/api/ventas")
 public class VentaController {
 
     private final RegistrarVentaUseCase registrarVentaUseCase;
@@ -44,9 +45,13 @@ public class VentaController {
         this.ventaMapper = ventaMapper;
     }
 
-    @PostMapping()
-    public ResponseEntity<VentaDetalleResponse> registrarVenta(@RequestBody CrearVentaRequest ventaRequest){
-        Venta ventaCreada = registrarVentaUseCase.ejecutar(ventaRequest);
+    @PostMapping
+    public ResponseEntity<VentaDetalleResponse> registrar(@RequestBody CrearVentaRequest ventaRequest){
+
+        // 1. La "magia" ocurre aquí
+        RegistrarVentaUseCase.Command command = ventaMapper.mapearACommand(ventaRequest);
+
+        Venta ventaCreada = registrarVentaUseCase.ejecutar(command);
 
         VentaDetalleResponse ventaDetalleResponse = ventaMapper.mapearADetalleResponse(ventaCreada);
 
@@ -55,7 +60,7 @@ public class VentaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<VentaResumenResponse>> listarVentas(
+    public ResponseEntity<Page<VentaResumenResponse>> listar(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
             @RequestParam(required = false) EstadoVenta estado,
@@ -71,7 +76,7 @@ public class VentaController {
     }
 
     @GetMapping("/{idVenta}")
-    public ResponseEntity<VentaDetalleResponse> obtenerVentaPorId(@PathVariable Long idVenta){
+    public ResponseEntity<VentaDetalleResponse> obtenerPorId(@PathVariable Long idVenta){
         Venta ventaEncontrada = buscarVentaPorIdUseCase.ejecutar(idVenta);
         return ResponseEntity.status(HttpStatus.OK).body(ventaMapper.mapearADetalleResponse(ventaEncontrada));
     }
@@ -81,41 +86,42 @@ public class VentaController {
     esto es para usar en caso de pruebas o venta erronea y no dejar rastro en la bdd de ella
      */
     @DeleteMapping("/{idVenta}/eliminar-venta")
-    public ResponseEntity<String> eliminarVenta(@PathVariable Long idVenta){
+    public ResponseEntity<String> eliminar(@PathVariable Long idVenta){
         eliminarVentaPorIdUseCase.ejecutar(idVenta);
         return ResponseEntity.status(HttpStatus.OK).body("Venta con ID: " + idVenta + " eliminada correctamente");
     }
 
     @PatchMapping("/{idVenta}/anular-venta")
-    public ResponseEntity<Void> anularVenta(@PathVariable Long idVenta, @RequestBody AnularVentaRequest anularVentaRequest){
+    public ResponseEntity<Void> anular(@PathVariable Long idVenta, @RequestBody AnularVentaRequest anularVentaRequest){
         anularVentaPorIdUseCase.ejecutar(idVenta, anularVentaRequest.motivo());
         return ResponseEntity.noContent().build();
         // 204 No Content es perfecto para indicar que la acción fue exitosa
     }
 
     @PatchMapping("/{idVenta}/iniciar-cocina-venta")
-    public ResponseEntity<Void> iniciarCocinaVenta(@PathVariable Long idVenta){
+    public ResponseEntity<Void> iniciarCocina(@PathVariable Long idVenta){
         iniciarCocinaVentaUseCase.ejecutar(idVenta);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{idVenta}/completar-venta")
-    public ResponseEntity<Void> completarVenta(@PathVariable Long idVenta){
+    public ResponseEntity<Void> completar(@PathVariable Long idVenta){
         completarVentaUseCase.ejecutar(idVenta);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{idVenta}/editar-venta")
-    public ResponseEntity<Void> editarVenta(@PathVariable Long idVenta, @RequestBody EditarVentaRequest editarVentaRequest){
-        editarVentaUseCase.ejecutar(idVenta, editarVentaRequest);
+    public ResponseEntity<Void> editar(@PathVariable Long idVenta, @RequestBody EditarVentaRequest editarVentaRequest){
+        editarVentaUseCase.ejecutar(idVenta, editarVentaRequest.montoBruto(), editarVentaRequest.costoInsumos(), editarVentaRequest.metodoPagoId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/reporte-ventas")
-    public ResponseEntity<ReporteVentasResponse> reporteVentas(
+    public ResponseEntity<ReporteVentasResponse> reporte(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin){
-        ReporteVentasResponse reporteVentasResponse = consultarReporteVentasUseCase.ejecutar(inicio,fin);
+        ReporteVentas reporteVentas = consultarReporteVentasUseCase.ejecutar(inicio,fin);
+        ReporteVentasResponse reporteVentasResponse = ventaMapper.mapearAReporteVentaResponse(reporteVentas);
         return ResponseEntity.ok(reporteVentasResponse);
     }
 }

@@ -1,9 +1,21 @@
 package com.burgerreal.burger_gestion.application.port.in.venta;
 
 import com.burgerreal.burger_gestion.domain.model.Venta;
-import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.CrearVentaRequest;
+
+import java.util.List;
 
 public interface RegistrarVentaUseCase {
 
-    Venta ejecutar(CrearVentaRequest crearVentaRequest);
+    Venta ejecutar(Command command);
+
+    record Command(
+            List<ItemVenta> items,
+            boolean pagoConfirmado,
+            Long metodoPagoId
+    ){}
+
+    record ItemVenta(
+            Long productoId,
+            Integer cantidad
+    ){}
 }
