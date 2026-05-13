@@ -1,26 +1,31 @@
 package com.burgerreal.burger_gestion.domain.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CompensacionVenta(
         Long id,
         Venta venta,
-        Long costoInsumos,
-        Long comisionCocina,
-        Long comisionTransbank,
-        Long montoTotalRetenido,
-        Long montoReembolsado,
+        BigDecimal costoInsumos,
+        BigDecimal comisionCocina,
+        BigDecimal comisionTransbank,
+        BigDecimal montoTotalRetenido,
+        BigDecimal montoReembolsado,
         String observacion,
         LocalDateTime fechaRegistro
 ) {
 
-    public static CompensacionVenta nuevaCompensacionVentaAnulada(Venta venta, String motivo, long comisionCocinero, long comisionTransbank) {
-        long multaInsumos = venta.calcularPerdidaInsumosSiEstaPreparada();
-        long totalRetenido = multaInsumos + comisionCocinero + comisionTransbank;
+    public static CompensacionVenta nuevaCompensacionVentaAnulada(Venta venta, String motivo, BigDecimal comisionCocinero, BigDecimal comisionTransbank) {
+        BigDecimal multaInsumos = venta.calcularPerdidaInsumosSiEstaPreparada();
+        BigDecimal totalRetenido = multaInsumos.add(comisionCocinero).add(comisionTransbank);
 
-        long montoReembolsar = 0;
+        BigDecimal montoReembolsar = BigDecimal.ZERO;
         if (venta.pagoConfirmado()) {
-            montoReembolsar = Math.max(0, venta.montoTotalBruto() - totalRetenido);
+            // Bruto - Retenciones. Usamos .max(ZERO) para no devolver saldos negativos
+            montoReembolsar = venta.montoTotalBruto().subtract(totalRetenido);
+            if (montoReembolsar.compareTo(BigDecimal.ZERO) < 0) {
+                montoReembolsar = BigDecimal.ZERO;
+            }
         }
 
         return new CompensacionVenta(null, venta, multaInsumos, comisionCocinero,

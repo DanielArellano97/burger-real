@@ -4,7 +4,7 @@ import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
 import com.burgerreal.burger_gestion.domain.model.Venta;
 import com.burgerreal.burger_gestion.domain.port.out.VentaRepositoryPort;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.VentaEntity;
-import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.venta.VentaMapper;
+import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.VentaMapper;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.repository.JpaVentaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

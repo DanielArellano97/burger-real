@@ -4,6 +4,8 @@ import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,17 +29,17 @@ public class VentaEntity {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime fechaEntregaCliente;
 
-    @Column(name = "monto_total_bruto", precision = 12, scale = 2)
-    private Long montoTotalBruto;
+    @Column(name = "monto_total_bruto", precision = 12)
+    private BigDecimal montoTotalBruto;
 
-    @Column(name = "costo_total_insumos", precision = 12, scale = 2)
-    private Long costoTotalInsumos;
+    @Column(name = "costo_total_insumos", precision = 12)
+    private BigDecimal costoTotalInsumos;
 
-    @Column(name = "comision_pasarela", precision = 12, scale = 2)
-    private Long comisionPasarela;
+    @Column(name = "comision_pasarela", precision = 12, scale = 4)
+    private BigDecimal comisionPasarela;
 
-    @Column(name = "ganancia_neta", precision = 12, scale = 2)
-    private Long gananciaNeta;
+    @Column(name = "ganancia_neta", precision = 12)
+    private BigDecimal gananciaNeta;
 
     @Column(name = "pago_confirmado", nullable = false)
     private boolean pagoConfirmado;
@@ -54,8 +56,8 @@ public class VentaEntity {
     private MetodoPagoEntity metodoPago;
 
     //constructor para insertar en bdd
-    public VentaEntity(LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, Long montoTotalBruto, Long costoTotalInsumos,
-                       Long comisionPasarela, Long gananciaNeta, boolean pagoConfirmado, EstadoVenta estado, MetodoPagoEntity metodoPago) {
+    public VentaEntity(LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos,
+                       BigDecimal comisionPasarela, BigDecimal gananciaNeta, boolean pagoConfirmado, EstadoVenta estado, MetodoPagoEntity metodoPago) {
         this.fechaInicioCocina = fechaInicioCocina;
         this.fechaEntregaCliente = fechaEntregaCliente;
         this.montoTotalBruto = montoTotalBruto;
@@ -69,8 +71,8 @@ public class VentaEntity {
     }
 
     //constructor para obtener desde bdd
-    public VentaEntity(Long id, LocalDateTime fecha, LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, Long montoTotalBruto, Long costoTotalInsumos,
-                       Long comisionPasarela, Long gananciaNeta, boolean pagoConfirmado, Long cargoPorAnulacionCocina, EstadoVenta estado, MetodoPagoEntity metodoPago) {
+    public VentaEntity(Long id, LocalDateTime fecha, LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos,
+                       BigDecimal comisionPasarela, BigDecimal gananciaNeta, boolean pagoConfirmado, Long cargoPorAnulacionCocina, EstadoVenta estado, MetodoPagoEntity metodoPago) {
         this.id = id;
         this.fecha = fecha;
         this.fechaInicioCocina = fechaInicioCocina;
@@ -102,35 +104,35 @@ public class VentaEntity {
         this.fecha = fecha;
     }
 
-    public Long getMontoTotalBruto() {
+    public BigDecimal getMontoTotalBruto() {
         return montoTotalBruto;
     }
 
-    public void setMontoTotalBruto(Long montoTotalBruto) {
+    public void setMontoTotalBruto(BigDecimal montoTotalBruto) {
         this.montoTotalBruto = montoTotalBruto;
     }
 
-    public Long getCostoTotalInsumos() {
+    public BigDecimal getCostoTotalInsumos() {
         return costoTotalInsumos;
     }
 
-    public void setCostoTotalInsumos(Long costoTotalInsumos) {
+    public void setCostoTotalInsumos(BigDecimal costoTotalInsumos) {
         this.costoTotalInsumos = costoTotalInsumos;
     }
 
-    public Long getComisionPasarela() {
+    public BigDecimal getComisionPasarela() {
         return comisionPasarela;
     }
 
-    public void setComisionPasarela(Long comisionPasarela) {
+    public void setComisionPasarela(BigDecimal comisionPasarela) {
         this.comisionPasarela = comisionPasarela;
     }
 
-    public Long getGananciaNeta() {
+    public BigDecimal getGananciaNeta() {
         return gananciaNeta;
     }
 
-    public void setGananciaNeta(Long gananciaNeta) {
+    public void setGananciaNeta(BigDecimal gananciaNeta) {
         this.gananciaNeta = gananciaNeta;
     }
 

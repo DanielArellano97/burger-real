@@ -1,12 +1,18 @@
-package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.venta;
+package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper;
 
+import com.burgerreal.burger_gestion.application.port.in.venta.RegistrarVentaUseCase.Command;
+import com.burgerreal.burger_gestion.application.port.in.venta.RegistrarVentaUseCase.ItemVenta;
+import com.burgerreal.burger_gestion.domain.model.ReporteVentas;
 import com.burgerreal.burger_gestion.domain.model.Venta;
+import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.CrearVentaRequest;
+import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.ReporteVentasResponse;
 import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.VentaDetalleResponse;
 import com.burgerreal.burger_gestion.infrastructure.adapter.in.web.dto.venta.VentaResumenResponse;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.MetodoPagoEntity;
 import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity.VentaEntity;
-import com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.mapper.metodoPago.MetodoPagoMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class VentaMapper {
@@ -20,43 +26,43 @@ public class VentaMapper {
     /**
      * De Record (Dominio) a Entity (Base de Datos)
      */
-    public VentaEntity mapearAEntity(Venta domain) {
-        if (domain == null) return null;
+    public VentaEntity mapearAEntity(Venta dominio) {
+        if (dominio == null) return null;
 
         // Obtenemos el MetodoPagoEntity (podría ser null)
-        MetodoPagoEntity metodoPagoEntity = (domain.metodoPago() != null)
-                ? metodoPagoMapper.mapearAEntity(domain.metodoPago())
+        MetodoPagoEntity metodoPagoEntity = (dominio.metodoPago() != null)
+                ? metodoPagoMapper.mapearAEntity(dominio.metodoPago())
                 : null;
 
         // Si no viene con id significa que es una insercion
-        if (domain.id() == null) {
+        if (dominio.id() == null) {
             // Caso: Venta Nueva (Sin ID)
             return new VentaEntity(
-                    domain.fechaInicioCocina(),
-                    domain.fechaEntregaCliente(),
-                    domain.montoTotalBruto(),
-                    domain.costoTotalInsumos(),
-                    domain.comisionPasarela(),
-                    domain.gananciaNeta(),
-                    domain.pagoConfirmado(),
-                    domain.estado(),
+                    dominio.fechaInicioCocina(),
+                    dominio.fechaEntregaCliente(),
+                    dominio.montoTotalBruto(),
+                    dominio.costoTotalInsumos(),
+                    dominio.comisionPasarela(),
+                    dominio.gananciaNeta(),
+                    dominio.pagoConfirmado(),
+                    dominio.estado(),
                     metodoPagoEntity
 
             );
         } else {
             // Caso: Venta Existente (Con ID y Fecha)
             return new VentaEntity(
-                    domain.id(),
-                    domain.fecha(),
-                    domain.fechaInicioCocina(),
-                    domain.fechaEntregaCliente(),
-                    domain.montoTotalBruto(),
-                    domain.costoTotalInsumos(),
-                    domain.comisionPasarela(),
-                    domain.gananciaNeta(),
-                    domain.pagoConfirmado(),
-                    domain.cargoPorAnulacionCocina(),
-                    domain.estado(),
+                    dominio.id(),
+                    dominio.fecha(),
+                    dominio.fechaInicioCocina(),
+                    dominio.fechaEntregaCliente(),
+                    dominio.montoTotalBruto(),
+                    dominio.costoTotalInsumos(),
+                    dominio.comisionPasarela(),
+                    dominio.gananciaNeta(),
+                    dominio.pagoConfirmado(),
+                    dominio.cargoPorAnulacionCocina(),
+                    dominio.estado(),
                     metodoPagoEntity
             );
         }
@@ -117,6 +123,44 @@ public class VentaMapper {
                 dominio.gananciaNeta(),
                 dominio.estado(),
                 metodoPagoMapper.mapearAResumenParaVentaResponse(dominio.metodoPago())
+        );
+    }
+
+    /**
+     * De Dominio (Record) a Response Reporte Venta
+     */
+    public ReporteVentasResponse mapearAReporteVentaResponse(ReporteVentas dominio) {
+        if (dominio == null) return null;
+
+        return new ReporteVentasResponse(
+            dominio.ingresosVentasBruto(),
+            dominio.recuperacionInsumosAnulados(),
+            dominio.ingresosMultasCocina(),
+            dominio.costoInsumosVendidos(),
+            dominio.costoInsumosPerdidos(),
+            dominio.comisionesBancariasTotales(),
+            dominio.balanceRealNeto(),
+            dominio.cantidadVentasCompletadas(),
+            dominio.cantidadVentasAnuladas(),
+            dominio.tiempoPromedioCocinaMinutos(),
+            dominio.tiempoPromedioEsperaTotalMinutos()
+        );
+    }
+
+    public Command mapearACommand(CrearVentaRequest request) {
+        if (request == null) return null;
+
+        List<ItemVenta> items = request.items().stream()
+                .map(item -> new ItemVenta(
+                        item.productoId(),
+                        item.cantidad()
+                ))
+                .toList();
+
+        return new Command(
+                items,
+                request.pagoConfirmado(),
+                request.metodoPagoId()
         );
     }
 }
