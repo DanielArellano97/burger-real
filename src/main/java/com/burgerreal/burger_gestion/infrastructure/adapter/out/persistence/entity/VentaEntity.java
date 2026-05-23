@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -55,9 +57,13 @@ public class VentaEntity {
     @JoinColumn(name = "metodo_pago_id")
     private MetodoPagoEntity metodoPago;
 
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemVentaEntity> items = new ArrayList<>();
+
     //constructor para insertar en bdd
-    public VentaEntity(LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos,
-                       BigDecimal comisionPasarela, BigDecimal gananciaNeta, boolean pagoConfirmado, EstadoVenta estado, MetodoPagoEntity metodoPago) {
+    public VentaEntity(LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, BigDecimal montoTotalBruto,
+                       BigDecimal costoTotalInsumos, BigDecimal comisionPasarela, BigDecimal gananciaNeta,
+                       boolean pagoConfirmado, EstadoVenta estado, MetodoPagoEntity metodoPago, List<ItemVentaEntity> items) {
         this.fechaInicioCocina = fechaInicioCocina;
         this.fechaEntregaCliente = fechaEntregaCliente;
         this.montoTotalBruto = montoTotalBruto;
@@ -68,11 +74,18 @@ public class VentaEntity {
         this.cargoPorAnulacionCocina = 0L;
         this.estado = estado;
         this.metodoPago = metodoPago;
+        this.items = items;
+        // Importante: Vinculamos cada item con esta venta
+        if (items != null) {
+            items.forEach(item -> item.setVenta(this));
+        }
     }
 
     //constructor para obtener desde bdd
-    public VentaEntity(Long id, LocalDateTime fecha, LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente, BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos,
-                       BigDecimal comisionPasarela, BigDecimal gananciaNeta, boolean pagoConfirmado, Long cargoPorAnulacionCocina, EstadoVenta estado, MetodoPagoEntity metodoPago) {
+    public VentaEntity(Long id, LocalDateTime fecha, LocalDateTime fechaInicioCocina, LocalDateTime fechaEntregaCliente,
+                       BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos, BigDecimal comisionPasarela,
+                       BigDecimal gananciaNeta, boolean pagoConfirmado, Long cargoPorAnulacionCocina,
+                       EstadoVenta estado, MetodoPagoEntity metodoPago, List<ItemVentaEntity> items) {
         this.id = id;
         this.fecha = fecha;
         this.fechaInicioCocina = fechaInicioCocina;
@@ -85,6 +98,10 @@ public class VentaEntity {
         this.cargoPorAnulacionCocina = cargoPorAnulacionCocina;
         this.estado = estado;
         this.metodoPago = metodoPago;
+        this.items = items;
+        if (items != null) {
+            items.forEach(item -> item.setVenta(this));
+        }
 
     }
 
@@ -189,5 +206,13 @@ public class VentaEntity {
         if (this.fecha == null) {
             this.fecha = LocalDateTime.now();
         }
+    }
+
+    public List<ItemVentaEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemVentaEntity> items) {
+        this.items = items;
     }
 }

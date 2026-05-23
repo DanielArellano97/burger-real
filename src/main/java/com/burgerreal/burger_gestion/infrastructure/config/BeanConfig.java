@@ -57,8 +57,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public AnularVentaPorIdService anularVentaPorIdService(VentaRepositoryPort ventaRepositoryPort, CompensacionVentaRepositoryPort compensacionVentaRepositoryPort, CalculoVentaService calculoVentaService){
-        return new AnularVentaPorIdService(ventaRepositoryPort,compensacionVentaRepositoryPort, calculoVentaService);
+    public AnularVentaPorIdService anularVentaPorIdService(VentaRepositoryPort ventaRepositoryPort, CompensacionVentaRepositoryPort compensacionVentaRepositoryPort, InsumoRepositoryPort insumoRepositoryPort, RecetaRepositoryPort recetaRepositoryPort, CalculoVentaService calculoVentaService){
+        return new AnularVentaPorIdService(ventaRepositoryPort,compensacionVentaRepositoryPort, insumoRepositoryPort, recetaRepositoryPort, calculoVentaService);
     }
 
     @Bean

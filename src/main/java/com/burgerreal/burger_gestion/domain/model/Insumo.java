@@ -36,19 +36,32 @@ public record Insumo(
     }
 
     public Insumo reducirStock(Double cantidad) {
-        if (this.stockActual < Math.round(cantidad)) {
+
+        long cantidadAJustar = (long) Math.ceil(cantidad);
+
+        if (this.stockActual < cantidadAJustar) {
             throw new IllegalStateException("No hay suficiente stock de: " + nombre);
         }
         return new Insumo(
                 id,
                 nombre,
                 costoUnitario,
-                (int) (stockActual - cantidad),
+                (int) (stockActual - cantidadAJustar),
                 stockMinimo,
                 unidadMedida,
                 categoria,
                 esInventariable,
                 recetaId
+        );
+    }
+
+    public Insumo aumentarStock(double cantidad) {
+
+        long cantidadAJustar = (long) Math.ceil(cantidad);
+
+        return new Insumo(
+                id, nombre, costoUnitario, (int) (stockActual + cantidadAJustar),
+                stockMinimo, unidadMedida, categoria, esInventariable, recetaId
         );
     }
 }

@@ -9,12 +9,12 @@ public interface RegistrarVentaUseCase {
     Venta ejecutar(Command command);
 
     record Command(
-            List<ItemVenta> items,
+            List<ItemVentaCommand> items,
             boolean pagoConfirmado,
             Long metodoPagoId
     ){}
 
-    record ItemVenta(
+    record ItemVentaCommand(
             Long productoId,
             Integer cantidad
     ){}
