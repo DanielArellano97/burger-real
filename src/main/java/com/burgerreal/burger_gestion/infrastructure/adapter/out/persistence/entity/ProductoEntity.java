@@ -32,24 +32,28 @@ public class ProductoEntity {
 
     private boolean disponible;
 
+    @Column(name = "requiere_cocina", nullable = false)
+    private boolean requiereCocina = true;
+
     // Relación con la tabla intermedia de ingredientes
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "producto_id") // Crea la FK en la tabla producto_insumos
     private List<ProductoInsumoEntity> ingredientes;
 
     //Creacion
-    public ProductoEntity(String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, List<ProductoInsumoEntity> ingredientes){
+    public ProductoEntity(String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumoEntity> ingredientes){
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precioVenta = precioVenta;
         this.costoProduccionTotal = costoProduccionTotal;
         this.imagenUrl = imagenUrl;
         this.disponible = disponible;
+        this.requiereCocina = requiereCocina;
         this.ingredientes = ingredientes;
     }
 
     //Obtecion
-    public ProductoEntity(Long id, String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, List<ProductoInsumoEntity> ingredientes){
+    public ProductoEntity(Long id, String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumoEntity> ingredientes){
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -57,6 +61,7 @@ public class ProductoEntity {
         this.costoProduccionTotal = costoProduccionTotal;
         this.imagenUrl = imagenUrl;
         this.disponible = disponible;
+        this.requiereCocina = requiereCocina;
         this.ingredientes = ingredientes;
     }
 
@@ -114,6 +119,14 @@ public class ProductoEntity {
 
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public boolean isRequiereCocina() {
+        return requiereCocina;
+    }
+
+    public void setRequiereCocina(boolean requiereCocina) {
+        this.requiereCocina = requiereCocina;
     }
 
     public List<ProductoInsumoEntity> getIngredientes() {
