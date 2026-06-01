@@ -5,6 +5,7 @@ import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record Venta (
      Long id,
@@ -18,11 +19,13 @@ public record Venta (
      boolean pagoConfirmado,
      Long cargoPorAnulacionCocina,
      EstadoVenta estado,
-     MetodoPago metodoPago
+     MetodoPago metodoPago,
+     List<ItemVenta> items
 ){
     //Nueva venta flujo creacion
-    public static Venta nuevaVenta(BigDecimal comision, BigDecimal neto, BigDecimal montoTotalBruto, BigDecimal costoTotalInsumos,
-                                   boolean pagoConfirmado, MetodoPago metodoPago){
+    public static Venta nuevaVenta(BigDecimal comision, BigDecimal neto, BigDecimal montoTotalBruto,
+                                   BigDecimal costoTotalInsumos, boolean pagoConfirmado, MetodoPago metodoPago,
+                                   List<ItemVenta> items){
         return new Venta(
                 null,
                 null,
@@ -35,7 +38,8 @@ public record Venta (
                 pagoConfirmado,
                 0L,
                 EstadoVenta.PENDIENTE,
-                metodoPago
+                metodoPago,
+                items
         );
     }
 
@@ -57,7 +61,8 @@ public record Venta (
                 this.pagoConfirmado,
                 comisionCocinero.setScale(0, RoundingMode.HALF_UP).longValue(),
                 EstadoVenta.ANULADA,   // Lo único que realmente cambia
-                this.metodoPago
+                this.metodoPago,
+                this.items
         );
     }
 
@@ -76,7 +81,7 @@ public record Venta (
                 this.id(), this.fecha(), LocalDateTime.now(), this.fechaEntregaCliente(),
                 this.montoTotalBruto(), this.costoTotalInsumos(), this.comisionPasarela(),
                 this.gananciaNeta(), this.pagoConfirmado(), this.cargoPorAnulacionCocina(),
-                this.estado(), this.metodoPago()
+                this.estado(), this.metodoPago(), this.items
         );
     }
 
@@ -95,7 +100,7 @@ public record Venta (
                 this.id(), this.fecha(), this.fechaInicioCocina(), LocalDateTime.now(),
                 this.montoTotalBruto(), this.costoTotalInsumos(), this.comisionPasarela(),
                 this.gananciaNeta(), this.pagoConfirmado(), this.cargoPorAnulacionCocina(),
-                EstadoVenta.COMPLETADA, this.metodoPago()
+                EstadoVenta.COMPLETADA, this.metodoPago(), this.items
         );
     }
 
@@ -112,7 +117,7 @@ public record Venta (
         return new Venta(
                 this.id(), this.fecha(), this.fechaInicioCocina(), this.fechaEntregaCliente(), nuevoMontoBruto,
                 nuevoCostoInsumos, nuevaComision, nuevaGananciaNeta, this.pagoConfirmado(),
-                this.cargoPorAnulacionCocina(), this.estado(), nuevoMetodoPago
+                this.cargoPorAnulacionCocina(), this.estado(), nuevoMetodoPago, this.items
         );
     }
 

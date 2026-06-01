@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistrarVentaService implements RegistrarVentaUseCase {
 
@@ -36,7 +38,9 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
         BigDecimal costoTotalInsumos = BigDecimal.ZERO;
         BigDecimal montoTotalBruto = BigDecimal.ZERO;
 
-        for (ItemVenta item : command.items()) {
+        List<ItemVenta> itemsParaVenta = new ArrayList<>();
+
+        for (ItemVentaCommand item : command.items()) {
             Producto producto = productoRepositoryPort.buscarPorId(item.productoId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
@@ -51,12 +55,22 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
                     producto.costoProduccionTotal().multiply(cantidadItems)
             );
 
+            // CREAR EL ITEM DE VENTA (La "foto" histórica)
+            // Guardamos el precioVenta y costoProduccionTotal actuales del producto
+            itemsParaVenta.add(new ItemVenta(
+                    null,
+                    producto,
+                    item.cantidad(),
+                    producto.precioVenta(),
+                    producto.costoProduccionTotal()
+            ));
+
             for (ProductoInsumo recetaItem : producto.ingredientes()) {
                 Insumo insumo = recetaItem.insumo();
 
                 if (insumo.esInventariable()) {
                     double rendimiento = recetaRepositoryPort.buscarPorId(insumo.recetaId()).
-                            orElseThrow(() -> new RuntimeException("Metodo de pago no encontrado con ID:" + command.metodoPagoId())).rendimiento();
+                            orElseThrow(() -> new RuntimeException("Receta no encontrada con ID:" + command.metodoPagoId())).rendimiento();
 
                     // Cantidad necesaria la que va al plato! papas 150gr palta 75. etc
                     BigDecimal cantidadNecesaria = BigDecimal.valueOf(recetaItem.cantidad())
@@ -83,7 +97,8 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
                 montoTotalBruto.setScale(0, RoundingMode.CEILING), // Precio final venta redondeado
                 costoTotalInsumos, // Este lo podemos dejar con decimales para reportes de costos precisos
                 command.pagoConfirmado(),
-                metodoPago);
+                metodoPago,
+                itemsParaVenta);
 
         return ventaRepositoryPort.guardar(nuevaVenta);
     }
