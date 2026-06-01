@@ -33,7 +33,7 @@ public class RegistrarProductoService implements RegistrarProductoUseCase {
                 }).toList();
 
         Producto nuevoProducto = Producto.crearProducto(command.nombre(), command.descripcion(), command.precioVenta(),
-                command.imagenUrl(), true, ingredientes);
+                command.imagenUrl(), command.disponible(), command.requiereCocina(), ingredientes);
 
         return productoRepositoryPort.guardar(nuevoProducto);
     }

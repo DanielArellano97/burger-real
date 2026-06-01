@@ -12,11 +12,12 @@ public record Producto(
         BigDecimal costoProduccionTotal,
         String imagenUrl,
         boolean disponible,
+        boolean requiereCocina,
         List<ProductoInsumo> ingredientes // La lista de insumos que componen la receta
 ) {
 
     public static Producto crearProducto(String nombre, String descripcion, Long precioVenta,
-                           String imagenUrl, boolean disponible, List<ProductoInsumo> ingredientes){
+                           String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumo> ingredientes){
 
         // 1. Calculamos el costo antes de crear la instancia
         BigDecimal costoCalculado = calcularCostoProduccion(ingredientes);
@@ -29,6 +30,7 @@ public record Producto(
                 costoCalculado,
                 imagenUrl,
                 disponible,
+                requiereCocina,
                 ingredientes
         );
     }

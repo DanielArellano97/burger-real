@@ -31,6 +31,7 @@ public class ProductoMapper {
                     dominio.costoProduccionTotal(),
                     dominio.imagenUrl(),
                     dominio.disponible(),
+                    dominio.requiereCocina(),
                     dominio.ingredientes().stream().map(productoInsumoMapper::toEntity).toList()
             );
         } else {
@@ -43,13 +44,12 @@ public class ProductoMapper {
                     dominio.costoProduccionTotal(),
                     dominio.imagenUrl(),
                     dominio.disponible(),
+                    dominio.requiereCocina(),
                     dominio.ingredientes().stream().map(productoInsumoMapper::toEntity).toList()
 
             );
         }
     }
-
-
 
     public Producto toDominio(ProductoEntity entity){
         if(entity == null) return null;
@@ -62,10 +62,10 @@ public class ProductoMapper {
                 entity.getCostoProduccionTotal(),
                 entity.getImagenUrl(),
                 entity.isDisponible(),
+                entity.isRequiereCocina(),
                 entity.getIngredientes().stream().map(productoInsumoMapper::toDominio).toList()
         );
     }
-
 
     public List<ResponseResumenProducto> toResponseResumenProducto(List<Producto> dominio) {
 
@@ -83,7 +83,6 @@ public class ProductoMapper {
                 ))
                 .toList();
     }
-
 
     public ResponseProducto toResponseProducto(Producto dominio) {
         if (dominio == null) return null;

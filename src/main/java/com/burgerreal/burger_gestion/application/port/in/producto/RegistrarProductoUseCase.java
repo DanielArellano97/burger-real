@@ -11,6 +11,8 @@ public interface RegistrarProductoUseCase {
             String descripcion,
             Long precioVenta,
             String imagenUrl,
+            boolean disponible,
+            boolean requiereCocina,
             List<ItemReceta> ingredientes
     ){}
 
