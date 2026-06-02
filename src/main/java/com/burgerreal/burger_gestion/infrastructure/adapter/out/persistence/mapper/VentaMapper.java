@@ -47,7 +47,8 @@ public class VentaMapper {
                         productoMapper.toEntity(item.producto()),
                         item.cantidad(),
                         item.precioVentaHistorico(),
-                        item.costoProduccionHistorico()
+                        item.costoProduccionHistorico(),
+                        item.entregado()
                 )).toList()
                 : null;
 
@@ -101,7 +102,8 @@ public class VentaMapper {
                         productoMapper.toDominio(itemEnt.getProducto()),
                         itemEnt.getCantidad(),
                         itemEnt.getPrecioVentaHistorico(),
-                        itemEnt.getCostoProduccionHistorico()
+                        itemEnt.getCostoProduccionHistorico(),
+                        itemEnt.isEntregado()
                 )).toList()
                 : List.of();
 

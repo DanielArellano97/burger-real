@@ -55,6 +55,9 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
                     producto.costoProduccionTotal().multiply(cantidadItems)
             );
 
+            // LÓGICA LOGÍSTICA: Si NO requiere cocina, se entrega de inmediato en el mostrador
+            boolean estaEntregado = !producto.requiereCocina();
+
             // CREAR EL ITEM DE VENTA (La "foto" histórica)
             // Guardamos el precioVenta y costoProduccionTotal actuales del producto
             itemsParaVenta.add(new ItemVenta(
@@ -62,7 +65,8 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
                     producto,
                     item.cantidad(),
                     producto.precioVenta(),
-                    producto.costoProduccionTotal()
+                    producto.costoProduccionTotal(),
+                    estaEntregado
             ));
 
             for (ProductoInsumo recetaItem : producto.ingredientes()) {
