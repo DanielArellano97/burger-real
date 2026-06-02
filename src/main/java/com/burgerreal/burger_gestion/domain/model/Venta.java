@@ -26,18 +26,28 @@ public record Venta (
     public static Venta nuevaVenta(BigDecimal comision, BigDecimal neto, BigDecimal montoTotalBruto,
                                    BigDecimal costoTotalInsumos, boolean pagoConfirmado, MetodoPago metodoPago,
                                    List<ItemVenta> items){
+
+        // REGLA LOGÍSTICA: Si TODOS los ítems ya están entregados, es una venta directa
+        boolean esVentaDirecta = items != null && items.stream().allMatch(ItemVenta::entregado);
+
+        // Si es venta directa, nace COMPLETADA de inmediato, si no, se queda PENDIENTE de cocina
+        EstadoVenta estadoInicial = esVentaDirecta ? EstadoVenta.COMPLETADA : EstadoVenta.PENDIENTE;
+
+        // Si es venta directa, la fecha de entrega al cliente es AHORA mismo
+        LocalDateTime fechaEntrega = esVentaDirecta ? LocalDateTime.now() : null;
+
         return new Venta(
                 null,
                 null,
                 null,
-                null,
+                fechaEntrega,
                 montoTotalBruto.setScale(0, RoundingMode.CEILING),
                 costoTotalInsumos.setScale(0, RoundingMode.CEILING),
                 comision,
                 neto.setScale(0, RoundingMode.CEILING),
                 pagoConfirmado,
                 0L,
-                EstadoVenta.PENDIENTE,
+                estadoInicial,
                 metodoPago,
                 items
         );

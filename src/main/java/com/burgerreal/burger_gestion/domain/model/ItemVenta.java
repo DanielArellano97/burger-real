@@ -7,6 +7,7 @@ public record ItemVenta(
         Producto producto,
         Integer cantidad,
         Long precioVentaHistorico,
-        BigDecimal costoProduccionHistorico
+        BigDecimal costoProduccionHistorico,
+        boolean entregado
 ) {
 }

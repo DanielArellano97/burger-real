@@ -34,14 +34,18 @@ public class ItemVentaEntity {
     @Column(name = "costo_produccion_historico", precision = 19)
     private BigDecimal costoProduccionHistorico;
 
+    @Column(nullable = false)
+    private boolean entregado = false;
+
     // Constructor para insertar (usado por el Mapper)
     public ItemVentaEntity(VentaEntity venta, ProductoEntity producto, Integer cantidad,
-                           Long precioVentaHistorico, BigDecimal costoProduccionHistorico) {
+                           Long precioVentaHistorico, BigDecimal costoProduccionHistorico, boolean entregado) {
         this.venta = venta;
         this.producto = producto;
         this.cantidad = cantidad;
         this.precioVentaHistorico = precioVentaHistorico;
         this.costoProduccionHistorico = costoProduccionHistorico;
+        this.entregado = entregado;
     }
 
     public Long getId() {
@@ -90,5 +94,13 @@ public class ItemVentaEntity {
 
     public void setCostoProduccionHistorico(BigDecimal costoProduccionHistorico) {
         this.costoProduccionHistorico = costoProduccionHistorico;
+    }
+
+    public boolean isEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(boolean entregado) {
+        this.entregado = entregado;
     }
 }
