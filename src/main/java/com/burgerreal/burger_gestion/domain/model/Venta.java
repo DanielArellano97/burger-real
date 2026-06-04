@@ -54,10 +54,10 @@ public record Venta (
     }
 
     public Venta anular(BigDecimal comisionCocinero) {
-        if (this.estado() == EstadoVenta.ANULADA)
+        if (this.estado == EstadoVenta.ANULADA)
             throw new IllegalStateException("La venta ya está anulada");
 
-        if (this.estado() == EstadoVenta.COMPLETADA)
+        if (this.estado == EstadoVenta.COMPLETADA)
             throw new IllegalStateException("No se puede anular una venta que ya ha sido completada.");
         return new Venta(
                 this.id,
@@ -78,63 +78,75 @@ public record Venta (
 
     // Metodo de consulta simple para reglas de negocio
     public BigDecimal calcularPerdidaInsumosSiEstaPreparada() {
-        return this.burgerPreparada() ? this.costoTotalInsumos() : BigDecimal.ZERO;    }
+        boolean inicioCocina = this.estado == EstadoVenta.EN_COCINA
+                || this.estado == EstadoVenta.LISTO_PARA_ENTREGA;
+        return inicioCocina ? this.costoTotalInsumos : BigDecimal.ZERO;
+    }
 
     public Venta iniciarPreparacionVenta(){
-        if(this.estado() == EstadoVenta.ANULADA)
+        if(this.estado == EstadoVenta.ANULADA)
             throw new IllegalStateException("No se puede iniciar la preparacion: la venta está ANULADA.");
 
-        if(this.burgerPreparada())
-            throw new IllegalStateException("No se puede iniciar la preparacion: la burger ya fue hecha.");
+        if(this.estado != EstadoVenta.PENDIENTE)
+            throw new IllegalStateException("Solo se puede iniciar preparación de ventas PENDIENTES.");
 
         return new Venta(
-                this.id(), this.fecha(), LocalDateTime.now(), this.fechaEntregaCliente(),
-                this.montoTotalBruto(), this.costoTotalInsumos(), this.comisionPasarela(),
-                this.gananciaNeta(), this.pagoConfirmado(), this.cargoPorAnulacionCocina(),
-                this.estado(), this.metodoPago(), this.items
+                this.id, this.fecha, LocalDateTime.now(), this.fechaEntregaCliente,
+                this.montoTotalBruto, this.costoTotalInsumos, this.comisionPasarela,
+                this.gananciaNeta, this.pagoConfirmado, this.cargoPorAnulacionCocina,
+                EstadoVenta.EN_COCINA, this.metodoPago, this.items
+        );
+    }
+
+    public Venta terminarCocina() {
+        if (this.estado != EstadoVenta.EN_COCINA) {
+            throw new IllegalStateException("No se puede terminar la cocina: el pedido no está EN_COCINA.");
+        }
+
+        // REGLA LOGÍSTICA: Mutamos los ítems de cocina a entregado = true
+        List<ItemVenta> itemsActualizados = this.items().stream()
+                .map(item -> new ItemVenta(
+                        item.id(),
+                        item.producto(),
+                        item.cantidad(),
+                        item.precioVentaHistorico(),
+                        item.costoProduccionHistorico(),
+                        true // <--- Salió de cocina, por ende este ítem ya está listo/entregado
+                )).toList();
+
+        return new Venta(
+                this.id, this.fecha, this.fechaInicioCocina, this.fechaEntregaCliente,
+                this.montoTotalBruto, this.costoTotalInsumos, this.comisionPasarela,
+                this.gananciaNeta, this.pagoConfirmado, this.cargoPorAnulacionCocina,
+                EstadoVenta.LISTO_PARA_ENTREGA, // <--- Pasa a LISTO_PARA_ENTREGA
+                this.metodoPago, itemsActualizados // Le inyectamos la lista con los ítems ya listos
         );
     }
 
     public Venta completarVenta() {
-        // Aquí cambiamos el Enum de PENDIENTE a COMPLETADA
-        if(this.estado() == EstadoVenta.ANULADA)
-            throw new IllegalStateException("No se puede completar: la venta está ANULADA.");
-
-        if(this.estado() == EstadoVenta.COMPLETADA)
-            throw new IllegalStateException("No se puede completar: la venta ya esta completada.");
-
-        if(!this.burgerPreparada())
-            throw new IllegalStateException("No se puede completar: cocina aún no prepara la burger.");
+        if (this.estado != EstadoVenta.LISTO_PARA_ENTREGA) {
+            throw new IllegalStateException("No se puede completar: el pedido debe estar LISTO_PARA_ENTREGA.");
+        }
 
         return new Venta(
-                this.id(), this.fecha(), this.fechaInicioCocina(), LocalDateTime.now(),
-                this.montoTotalBruto(), this.costoTotalInsumos(), this.comisionPasarela(),
-                this.gananciaNeta(), this.pagoConfirmado(), this.cargoPorAnulacionCocina(),
-                EstadoVenta.COMPLETADA, this.metodoPago(), this.items
+                this.id, this.fecha, this.fechaInicioCocina, LocalDateTime.now(),
+                this.montoTotalBruto, this.costoTotalInsumos, this.comisionPasarela,
+                this.gananciaNeta, this.pagoConfirmado, this.cargoPorAnulacionCocina,
+                EstadoVenta.COMPLETADA, this.metodoPago, this.items
         );
     }
 
     public Venta editarVenta(BigDecimal nuevoMontoBruto, BigDecimal nuevoCostoInsumos, BigDecimal nuevaComision,
                              BigDecimal nuevaGananciaNeta, MetodoPago nuevoMetodoPago) {
-        // REGLA DE NEGOCIO: No se edita si ya se empezó a cocinar o si no está pendiente
-        if (this.burgerPreparada()) {
-            throw new IllegalStateException("No se puede editar la venta: la preparación en cocina ya inició.");
-        }
-        if (this.estado() != EstadoVenta.PENDIENTE) {
+
+        if (this.estado != EstadoVenta.PENDIENTE) {
             throw new IllegalStateException("Solo se pueden editar ventas que estén en estado PENDIENTE.");
         }
 
         return new Venta(
-                this.id(), this.fecha(), this.fechaInicioCocina(), this.fechaEntregaCliente(), nuevoMontoBruto,
-                nuevoCostoInsumos, nuevaComision, nuevaGananciaNeta, this.pagoConfirmado(),
-                this.cargoPorAnulacionCocina(), this.estado(), nuevoMetodoPago, this.items
+                this.id, this.fecha, this.fechaInicioCocina, this.fechaEntregaCliente, nuevoMontoBruto,
+                nuevoCostoInsumos, nuevaComision, nuevaGananciaNeta, this.pagoConfirmado,
+                this.cargoPorAnulacionCocina, this.estado, nuevoMetodoPago, this.items
         );
-    }
-
-    // Esto NO es una variable, es un comportamiento
-    public boolean burgerPreparada() {
-        // Si hay una fecha de inicio, es obvio que se preparó.
-        // No necesito que nadie me lo diga por parámetro.
-        return this.fechaInicioCocina != null;
     }
 }

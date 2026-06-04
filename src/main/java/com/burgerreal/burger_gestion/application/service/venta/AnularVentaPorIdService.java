@@ -1,6 +1,7 @@
 package com.burgerreal.burger_gestion.application.service.venta;
 
 import com.burgerreal.burger_gestion.application.port.in.venta.AnularVentaPorIdUseCase;
+import com.burgerreal.burger_gestion.domain.enums.EstadoVenta;
 import com.burgerreal.burger_gestion.domain.model.*;
 import com.burgerreal.burger_gestion.domain.port.out.CompensacionVentaRepositoryPort;
 import com.burgerreal.burger_gestion.domain.port.out.InsumoRepositoryPort;
@@ -36,9 +37,13 @@ public class AnularVentaPorIdService implements AnularVentaPorIdUseCase {
         Venta venta = ventaRepositoryPort.buscarPorId(ventaId)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no existe"));
 
+        // REGLA DE NEGOCIO EN BASE A ESTADOS: ¿Ya pasó por las manos de cocina?
+        boolean yaPasoPorCocina = venta.estado() == EstadoVenta.EN_COCINA
+                || venta.estado() == EstadoVenta.LISTO_PARA_ENTREGA;
+
         // 2. Calculamos las comisiones/multas usando BigDecimal
         // Para el cocinero (ajusta calcularMultaStaff para que devuelva BigDecimal)
-        BigDecimal comisionCocinero = venta.fechaInicioCocina() != null
+        BigDecimal comisionCocinero = yaPasoPorCocina
                 ? calculoVentaService.calcularMultaStaff(venta.montoTotalBruto())
                 : BigDecimal.ZERO;
 
@@ -47,7 +52,7 @@ public class AnularVentaPorIdService implements AnularVentaPorIdUseCase {
                 ? calculoVentaService.calcularComision(venta.montoTotalBruto(), venta.metodoPago())
                 : BigDecimal.ZERO;
 
-        if (!venta.burgerPreparada() && venta.items() != null) {
+        if (!yaPasoPorCocina && venta.items() != null) {
             for (ItemVenta item : venta.items()) {
                 // Recorremos los ingredientes que tenía el producto al momento de la venta
                 for (ProductoInsumo recetaItem : item.producto().ingredientes()) {
