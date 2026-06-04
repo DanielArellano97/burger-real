@@ -30,9 +30,18 @@ public class VentaController {
     private final CompletarVentaUseCase completarVentaUseCase;
     private final EditarVentaUseCase editarVentaUseCase;
     private final ConsultarReporteVentasUseCase consultarReporteVentasUseCase;
+    private final TerminarCocinaVentaUseCase terminarCocinaVentaUseCase;
     private final VentaMapper ventaMapper;
 
-    public VentaController(RegistrarVentaUseCase registrarVentaUseCase, ListarVentasUseCase listarVentasUseCase, BuscarVentaPorIdUseCase buscarVentaPorIdUseCase, EliminarVentaPorIdUseCase eliminarVentaPorIdUseCase, AnularVentaPorIdUseCase anularVentaPorIdUseCase, IniciarCocinaVentaUseCase iniciarCocinaVentaUseCase, CompletarVentaUseCase completarVentaUseCase, EditarVentaUseCase editarVentaUseCase, ConsultarReporteVentasUseCase consultarReporteVentasUseCase, VentaMapper ventaMapper) {
+    public VentaController(RegistrarVentaUseCase registrarVentaUseCase, ListarVentasUseCase listarVentasUseCase,
+                           BuscarVentaPorIdUseCase buscarVentaPorIdUseCase,
+                           EliminarVentaPorIdUseCase eliminarVentaPorIdUseCase,
+                           AnularVentaPorIdUseCase anularVentaPorIdUseCase,
+                           IniciarCocinaVentaUseCase iniciarCocinaVentaUseCase,
+                           CompletarVentaUseCase completarVentaUseCase,
+                           EditarVentaUseCase editarVentaUseCase,
+                           ConsultarReporteVentasUseCase consultarReporteVentasUseCase,
+                           TerminarCocinaVentaUseCase terminarCocinaVentaUseCase, VentaMapper ventaMapper) {
         this.registrarVentaUseCase = registrarVentaUseCase;
         this.listarVentasUseCase = listarVentasUseCase;
         this.buscarVentaPorIdUseCase = buscarVentaPorIdUseCase;
@@ -42,6 +51,7 @@ public class VentaController {
         this.completarVentaUseCase = completarVentaUseCase;
         this.editarVentaUseCase = editarVentaUseCase;
         this.consultarReporteVentasUseCase = consultarReporteVentasUseCase;
+        this.terminarCocinaVentaUseCase = terminarCocinaVentaUseCase;
         this.ventaMapper = ventaMapper;
     }
 
@@ -102,6 +112,12 @@ public class VentaController {
     public ResponseEntity<Void> iniciarCocina(@PathVariable Long idVenta){
         iniciarCocinaVentaUseCase.ejecutar(idVenta);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/terminar-cocina")
+    public ResponseEntity<VentaDetalleResponse> terminarCocina(@PathVariable Long id) {
+        Venta venta = terminarCocinaVentaUseCase.ejecutar(id);
+        return ResponseEntity.ok(ventaMapper.mapearADetalleResponse(venta));
     }
 
     @PatchMapping("/{idVenta}/completar-venta")

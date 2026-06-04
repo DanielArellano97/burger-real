@@ -165,5 +165,8 @@ public class BeanConfig {
         return new BuscarRecetaPorIdService(recetaRepositoryPort);
     }
 
-
+    @Bean
+    public TerminarCocinaVentaService terminarCocinaVentaService(VentaRepositoryPort ventaRepositoryPort){
+        return new TerminarCocinaVentaService(ventaRepositoryPort);
+    }
 }
