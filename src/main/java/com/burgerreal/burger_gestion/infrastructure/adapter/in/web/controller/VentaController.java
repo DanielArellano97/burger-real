@@ -140,4 +140,27 @@ public class VentaController {
         ReporteVentasResponse reporteVentasResponse = ventaMapper.mapearAReporteVentaResponse(reporteVentas);
         return ResponseEntity.ok(reporteVentasResponse);
     }
+
+    // NUEVO: El salvavidas express para el WhatsApp de Burger Real 🚀
+    @PostMapping("/express")
+    public ResponseEntity<VentaDetalleResponse> registrarExpress(@RequestBody CrearVentaRequest ventaRequest){
+
+        // 1. Mapeamos el JSON original al Command base
+        RegistrarVentaUseCase.Command commandBase = ventaMapper.mapearACommand(ventaRequest);
+
+        // 2. Forzamos a que sea Express mutando el Command (aprovechando que los records permiten clonar/redefinir de forma limpia)
+        RegistrarVentaUseCase.Command commandExpress = new RegistrarVentaUseCase.Command(
+                commandBase.items(),
+                commandBase.pagoConfirmado(),
+                commandBase.metodoPagoId(),
+                true// <--- Forzamos el esExpress = true acá mismo!
+
+        );
+
+        // 3. Ejecutamos el mismo servicio de siempre
+        Venta ventaCreada = registrarVentaUseCase.ejecutar(commandExpress);
+
+        VentaDetalleResponse ventaDetalleResponse = ventaMapper.mapearADetalleResponse(ventaCreada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ventaDetalleResponse);
+    }
 }

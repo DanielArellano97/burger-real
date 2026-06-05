@@ -56,7 +56,7 @@ public class RegistrarVentaService implements RegistrarVentaUseCase {
             );
 
             // LÓGICA LOGÍSTICA: Si NO requiere cocina, se entrega de inmediato en el mostrador
-            boolean estaEntregado = !producto.requiereCocina();
+            boolean estaEntregado = command.esExpress() || !producto.requiereCocina();
 
             // CREAR EL ITEM DE VENTA (La "foto" histórica)
             // Guardamos el precioVenta y costoProduccionTotal actuales del producto
