@@ -11,7 +11,8 @@ public interface RegistrarVentaUseCase {
     record Command(
             List<ItemVentaCommand> items,
             boolean pagoConfirmado,
-            Long metodoPagoId
+            Long metodoPagoId,
+            boolean esExpress
     ){}
 
     record ItemVentaCommand(

@@ -206,7 +206,8 @@ public class VentaMapper {
         return new Command(
                 items,
                 request.pagoConfirmado(),
-                request.metodoPagoId()
+                request.metodoPagoId(),
+                false
         );
     }
 }
