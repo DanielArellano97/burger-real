@@ -13,11 +13,14 @@ public record Insumo(
         String unidadMedida,
         CategoriaInsumo categoria,
         boolean esInventariable,
+        BigDecimal valorExtra,
+        boolean esComercializadoraExtra,
         Long recetaId
 ) {
 
-    public static Insumo nuevoInsumo(String nombre, BigDecimal costoUnitario, Integer stockActual, Integer stockMinimo, String unidadMedida,
-                                     CategoriaInsumo categoria, boolean esInventariable, Long recetaId){
+    public static Insumo nuevoInsumo(String nombre, BigDecimal costoUnitario, Integer stockActual, Integer stockMinimo,
+                                     String unidadMedida, CategoriaInsumo categoria, boolean esInventariable,
+                                     BigDecimal valorExtra, boolean esComercializadoraExtra, Long recetaId){
         return new Insumo(
                 null,
                 nombre,
@@ -27,6 +30,8 @@ public record Insumo(
                 unidadMedida,
                 categoria,
                 esInventariable,
+                valorExtra,
+                esComercializadoraExtra,
                 recetaId
         );
     }
@@ -51,6 +56,8 @@ public record Insumo(
                 unidadMedida,
                 categoria,
                 esInventariable,
+                valorExtra,
+                esComercializadoraExtra,
                 recetaId
         );
     }
@@ -61,7 +68,7 @@ public record Insumo(
 
         return new Insumo(
                 id, nombre, costoUnitario, (int) (stockActual + cantidadAJustar),
-                stockMinimo, unidadMedida, categoria, esInventariable, recetaId
+                stockMinimo, unidadMedida, categoria, esInventariable, valorExtra, esComercializadoraExtra, recetaId
         );
     }
 }

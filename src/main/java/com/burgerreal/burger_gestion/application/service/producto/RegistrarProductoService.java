@@ -4,10 +4,12 @@ import com.burgerreal.burger_gestion.application.port.in.producto.RegistrarProdu
 import com.burgerreal.burger_gestion.domain.model.Insumo;
 import com.burgerreal.burger_gestion.domain.model.Producto;
 import com.burgerreal.burger_gestion.domain.model.ProductoInsumo;
+import com.burgerreal.burger_gestion.domain.model.ProductoVariante;
 import com.burgerreal.burger_gestion.domain.port.out.InsumoRepositoryPort;
 import com.burgerreal.burger_gestion.domain.port.out.ProductoRepositoryPort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RegistrarProductoService implements RegistrarProductoUseCase {
@@ -32,8 +34,26 @@ public class RegistrarProductoService implements RegistrarProductoUseCase {
                     return ProductoInsumo.crearProductoInsumo(insumo, ingrediente.cantidad());
                 }).toList();
 
-        Producto nuevoProducto = Producto.crearProducto(command.nombre(), command.descripcion(), command.precioVenta(),
-                command.imagenUrl(), command.disponible(), command.requiereCocina(), ingredientes);
+        List<ProductoVariante> variantes = command.variantes() != null ? command.variantes().stream()
+                .map(v -> new ProductoVariante(
+                        null, // Es nulo porque es una inserción y la BD generará el ID después
+                        v.nombre(),
+                        v.nombreCorto(),
+                        v.precioExtra()
+                )).toList()
+                : Collections.emptyList();
+
+        Producto nuevoProducto = Producto.crearProducto(
+                command.nombre(),
+                command.descripcion(),
+                command.precioVenta(),
+                command.imagenUrl(),
+                command.disponible(),
+                command.requiereCocina(),
+                command.categoria(),
+                ingredientes,
+                variantes // 👈 ¡Inyectada la nueva lista!
+        );
 
         return productoRepositoryPort.guardar(nuevoProducto);
     }

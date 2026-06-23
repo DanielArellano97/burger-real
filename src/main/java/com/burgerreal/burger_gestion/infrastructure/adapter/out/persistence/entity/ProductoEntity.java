@@ -1,13 +1,13 @@
 package com.burgerreal.burger_gestion.infrastructure.adapter.out.persistence.entity;
 
+import com.burgerreal.burger_gestion.domain.enums.CategoriaProducto;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
 @Table(name = "productos")
 public class ProductoEntity {
 
@@ -35,13 +35,22 @@ public class ProductoEntity {
     @Column(name = "requiere_cocina", nullable = false)
     private boolean requiereCocina = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria", nullable = false)
+    private CategoriaProducto categoria;
+
     // Relación con la tabla intermedia de ingredientes
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "producto_id") // Crea la FK en la tabla producto_insumos
     private List<ProductoInsumoEntity> ingredientes;
 
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoVarianteEntity> variantes;
+
     //Creacion
-    public ProductoEntity(String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumoEntity> ingredientes){
+    public ProductoEntity(String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal,
+                          String imagenUrl, boolean disponible, boolean requiereCocina, CategoriaProducto categoria,
+                          List<ProductoInsumoEntity> ingredientes, List<ProductoVarianteEntity> variantes){
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precioVenta = precioVenta;
@@ -49,11 +58,15 @@ public class ProductoEntity {
         this.imagenUrl = imagenUrl;
         this.disponible = disponible;
         this.requiereCocina = requiereCocina;
+        this.categoria = categoria;
         this.ingredientes = ingredientes;
+        this.variantes = variantes != null ? variantes : new ArrayList<>(); // 🌟 Evitamos NullPointerException
     }
 
-    //Obtecion
-    public ProductoEntity(Long id, String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal, String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumoEntity> ingredientes){
+    //Obtencion
+    public ProductoEntity(Long id, String nombre, String descripcion, Long precioVenta, BigDecimal costoProduccionTotal,
+                          String imagenUrl, boolean disponible, boolean requiereCocina, CategoriaProducto categoria,
+                          List<ProductoInsumoEntity> ingredientes, List<ProductoVarianteEntity> variantes){
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -62,7 +75,12 @@ public class ProductoEntity {
         this.imagenUrl = imagenUrl;
         this.disponible = disponible;
         this.requiereCocina = requiereCocina;
+        this.categoria = categoria;
         this.ingredientes = ingredientes;
+        this.variantes = variantes != null ? variantes : new ArrayList<>(); // 🌟 Evitamos NullPointerException
+    }
+
+    public ProductoEntity() {
     }
 
     public Long getId() {
@@ -129,11 +147,27 @@ public class ProductoEntity {
         this.requiereCocina = requiereCocina;
     }
 
+    public CategoriaProducto getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaProducto categoria) {
+        this.categoria = categoria;
+    }
+
     public List<ProductoInsumoEntity> getIngredientes() {
         return ingredientes;
     }
 
     public void setIngredientes(List<ProductoInsumoEntity> ingredientes) {
         this.ingredientes = ingredientes;
+    }
+
+    public List<ProductoVarianteEntity> getVariantes() {
+        return variantes;
+    }
+
+    public void setVariantes(List<ProductoVarianteEntity> variantes) {
+        this.variantes = variantes;
     }
 }
