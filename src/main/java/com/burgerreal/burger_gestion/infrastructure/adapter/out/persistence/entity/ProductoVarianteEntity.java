@@ -17,7 +17,7 @@ public class ProductoVarianteEntity {
     @Column(nullable = false)
     private String nombre; // Ej: "x5 unidades"
 
-    @Column(name = "nombre_corto", nullable = false, length = 10)
+    @Column(name = "nombre_corto", nullable = false, length = 20)
     private String nombreCorto; // Ej: "x5"
 
     @Column(name = "precio_extra", nullable = false, precision = 19)

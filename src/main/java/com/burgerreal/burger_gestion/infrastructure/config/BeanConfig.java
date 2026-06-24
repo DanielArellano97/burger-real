@@ -1,5 +1,6 @@
 package com.burgerreal.burger_gestion.infrastructure.config;
 
+import com.burgerreal.burger_gestion.application.service.combo.ListarCombosService;
 import com.burgerreal.burger_gestion.application.service.merma.ListarMermasService;
 import com.burgerreal.burger_gestion.application.service.ProduccionService;
 import com.burgerreal.burger_gestion.application.service.merma.RegistrarMermaService;
@@ -168,5 +169,10 @@ public class BeanConfig {
     @Bean
     public TerminarCocinaVentaService terminarCocinaVentaService(VentaRepositoryPort ventaRepositoryPort){
         return new TerminarCocinaVentaService(ventaRepositoryPort);
+    }
+
+    @Bean
+    public ListarCombosService listarCombosService(ComboRepositoryPort comboRepositoryPort){
+        return new ListarCombosService(comboRepositoryPort);
     }
 }
