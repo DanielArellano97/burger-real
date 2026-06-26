@@ -7,7 +7,7 @@ public enum CategoriaInsumo {
     LACTEO,
     SALSA,
     BEBIDA,
-    ACOMPAÑAMIENTO,
+    CONGELADO,
     PACKAGING,
     OTROS
 }

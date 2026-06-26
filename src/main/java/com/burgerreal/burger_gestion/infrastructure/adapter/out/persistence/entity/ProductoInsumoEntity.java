@@ -19,17 +19,27 @@ public class ProductoInsumoEntity {
     @Column(nullable = false)
     private double cantidad;
 
+    @Column(name = "permite_quitar", nullable = false)
+    private boolean permiteQuitar;
+
+    @Column(name = "permite_agregar", nullable = false)
+    private boolean permiteAgregar;
+
     //Creacion
-    public ProductoInsumoEntity (InsumoEntity insumo, Double cantidad){
+    public ProductoInsumoEntity(InsumoEntity insumo, Double cantidad, boolean permiteQuitar, boolean permiteAgregar) {
         this.insumo = insumo;
         this.cantidad = cantidad;
+        this.permiteQuitar = permiteQuitar;
+        this.permiteAgregar = permiteAgregar;
     }
 
     //Obtecion
-    public ProductoInsumoEntity (Long id, InsumoEntity insumo, Double cantidad){
+    public ProductoInsumoEntity(Long id, InsumoEntity insumo, Double cantidad, boolean permiteQuitar, boolean permiteAgregar) {
         this.id = id;
         this.insumo = insumo;
         this.cantidad = cantidad;
+        this.permiteQuitar = permiteQuitar;
+        this.permiteAgregar = permiteAgregar;
     }
 
 
@@ -53,7 +63,23 @@ public class ProductoInsumoEntity {
         return cantidad;
     }
 
-    public void setCantidad(Integer cantidad) {
+    public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public boolean isPermiteQuitar() {
+        return permiteQuitar;
+    }
+
+    public void setPermiteQuitar(boolean permiteQuitar) {
+        this.permiteQuitar = permiteQuitar;
+    }
+
+    public boolean isPermiteAgregar() {
+        return permiteAgregar;
+    }
+
+    public void setPermiteAgregar(boolean permiteAgregar) {
+        this.permiteAgregar = permiteAgregar;
     }
 }

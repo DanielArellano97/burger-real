@@ -79,6 +79,8 @@ public class RegistrarRecetaService implements RegistrarRecetaUseCase {
                 receta.unidadMedida(), // Podrías sacarlo de un campo en la receta si quieres
                 recetaGuardada.categoriaInsumo(),
                 true, // Es inventariable por defecto
+                BigDecimal.ZERO,
+                false,
                 recetaGuardada.id() // Vínculo con la receta recién creada
         );
 

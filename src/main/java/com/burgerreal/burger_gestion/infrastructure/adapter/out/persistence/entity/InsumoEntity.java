@@ -37,12 +37,20 @@ public class InsumoEntity {
     @Column(name = "es_inventariable")
     private boolean esInventariable;
 
+    @Column(name = "valor_extra", nullable = false, precision = 19)
+    private BigDecimal valorExtra;
+
+    @Column(name = "es_comercializable_extra", nullable = false)
+    private boolean esComercializableExtra = false; // 👑 Por defecto en false por seguridad
+
     @OneToOne // Una receta genera UN insumo final (ej: Receta Palta -> Insumo Palta Procesada)
     @JoinColumn(name = "receta_id")
     private RecetaEntity receta;
 
     //Constructor para crear desde receta
-    public InsumoEntity(String nombre, BigDecimal costoUnitario, int stockActual, int stockMinimo, String unidadMedida, CategoriaInsumo categoria, boolean esInventariable, RecetaEntity receta){
+    public InsumoEntity(String nombre, BigDecimal costoUnitario, int stockActual, int stockMinimo, String unidadMedida,
+                        CategoriaInsumo categoria, boolean esInventariable, BigDecimal valorExtra,
+                        boolean esComercializableExtra, RecetaEntity receta){
         this.nombre = nombre;
         this.costoUnitario = costoUnitario;
         this.stockActual = stockActual;
@@ -50,11 +58,14 @@ public class InsumoEntity {
         this.unidadMedida = unidadMedida;
         this.categoria = categoria;
         this.esInventariable = esInventariable;
+        this.valorExtra = valorExtra;
+        this.esComercializableExtra = esComercializableExtra;
         this.receta = receta;
     }
 
     //Constructor para buscar
-    public InsumoEntity(Long id, String nombre, BigDecimal costoUnitario, Integer stockActual, Integer stockMinimo, String unidadMedida, CategoriaInsumo categoria, boolean esInventariable){
+    public InsumoEntity(Long id, String nombre, BigDecimal costoUnitario, Integer stockActual, Integer stockMinimo,
+                        String unidadMedida, CategoriaInsumo categoria, boolean esInventariable, BigDecimal valorExtra, boolean esComercializableExtra){
         this.id = id;
         this.nombre = nombre;
         this.costoUnitario = costoUnitario;
@@ -63,10 +74,14 @@ public class InsumoEntity {
         this.unidadMedida = unidadMedida;
         this.categoria = categoria;
         this.esInventariable = esInventariable;
+        this.valorExtra = valorExtra;
+        this.esComercializableExtra = esComercializableExtra;
     }
 
     //Constructor para actualizar stocks
-    public InsumoEntity(Long id, String nombre, BigDecimal costoUnitario, int stockActual, int stockMinimo, String unidadMedida, CategoriaInsumo categoria, boolean esInventariable, RecetaEntity receta){
+    public InsumoEntity(Long id, String nombre, BigDecimal costoUnitario, int stockActual, int stockMinimo,
+                        String unidadMedida, CategoriaInsumo categoria, boolean esInventariable, BigDecimal valorExtra,
+                        boolean esComercializableExtra, RecetaEntity receta){
         this.id = id;
         this.nombre = nombre;
         this.costoUnitario = costoUnitario;
@@ -75,6 +90,8 @@ public class InsumoEntity {
         this.unidadMedida = unidadMedida;
         this.categoria = categoria;
         this.esInventariable = esInventariable;
+        this.valorExtra = valorExtra;
+        this.esComercializableExtra = esComercializableExtra;
         this.receta = receta;
     }
 
@@ -145,6 +162,22 @@ public class InsumoEntity {
 
     public void setEsInventariable(boolean esInventariable) {
         this.esInventariable = esInventariable;
+    }
+
+    public BigDecimal getValorExtra() {
+        return valorExtra;
+    }
+
+    public void setValorExtra(BigDecimal valorExtra) {
+        this.valorExtra = valorExtra;
+    }
+
+    public boolean isEsComercializableExtra() {
+        return esComercializableExtra;
+    }
+
+    public void setEsComercializableExtra(boolean esComercializableExtra) {
+        this.esComercializableExtra = esComercializableExtra;
     }
 
     public RecetaEntity getReceta() {

@@ -1,5 +1,7 @@
 package com.burgerreal.burger_gestion.domain.model;
 
+import com.burgerreal.burger_gestion.domain.enums.CategoriaProducto;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -9,15 +11,20 @@ public record Producto(
         String nombre,
         String descripcion,
         Long precioVenta,
+        Long precioOferta,
         BigDecimal costoProduccionTotal,
         String imagenUrl,
         boolean disponible,
         boolean requiereCocina,
-        List<ProductoInsumo> ingredientes // La lista de insumos que componen la receta
+        CategoriaProducto categoria,
+        List<ProductoInsumo> ingredientes,
+        List<ProductoVariante> variantes
 ) {
 
-    public static Producto crearProducto(String nombre, String descripcion, Long precioVenta,
-                           String imagenUrl, boolean disponible, boolean requiereCocina, List<ProductoInsumo> ingredientes){
+    public static Producto crearProducto(String nombre, String descripcion, Long precioVenta, Long precioOferta,
+                           String imagenUrl, boolean disponible, boolean requiereCocina,
+                                         CategoriaProducto categoria, List<ProductoInsumo> ingredientes,
+                                         List<ProductoVariante> variantes){
 
         // 1. Calculamos el costo antes de crear la instancia
         BigDecimal costoCalculado = calcularCostoProduccion(ingredientes);
@@ -27,11 +34,31 @@ public record Producto(
                 nombre,
                 descripcion,
                 precioVenta,
+                precioOferta,
                 costoCalculado,
                 imagenUrl,
                 disponible,
                 requiereCocina,
-                ingredientes
+                categoria,
+                ingredientes,
+                variantes
+        );
+    }
+
+    public Producto conPrecioOfertaModificado(Long nuevoPrecioOferta) {
+        return new Producto(
+                id,
+                nombre,
+                descripcion,
+                precioVenta,
+                nuevoPrecioOferta,
+                costoProduccionTotal,// 🌟 Aquí se setea el null
+                imagenUrl,
+                disponible,
+                requiereCocina,
+                categoria,
+                ingredientes,
+                variantes
         );
     }
 

@@ -24,6 +24,8 @@ public class InsumoMapper {
                 entity.getUnidadMedida(),
                 entity.getCategoria(),
                 entity.isEsInventariable(),
+                entity.getValorExtra(),
+                entity.isEsComercializableExtra(),
                 entity.getReceta() != null ? entity.getReceta().getId() : null
         );
     }
@@ -38,6 +40,8 @@ public class InsumoMapper {
                 dominio.unidadMedida(),
                 dominio.categoria(),
                 dominio.esInventariable(),
+                dominio.valorExtra(),
+                dominio.esComercializadoraExtra(),
                 receta
         );
     }
@@ -53,6 +57,8 @@ public class InsumoMapper {
                 dominio.unidadMedida(),
                 dominio.categoria(),
                 dominio.esInventariable(),
+                dominio.valorExtra(),
+                dominio.esComercializadoraExtra(),
                 receta
         );
     }
@@ -68,6 +74,8 @@ public class InsumoMapper {
                 crearInsumoRequest.unidadMedida(),
                 crearInsumoRequest.categoria(),
                 crearInsumoRequest.esInventariable(),
+                crearInsumoRequest.valorExtra(),
+                crearInsumoRequest.esComercializadoraExtra(),
                 crearInsumoRequest.idReceta()
         );
     }
