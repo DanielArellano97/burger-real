@@ -11,6 +11,7 @@ public record ResponseProducto(
         String nombre,
         String descripcion,
         Long precioVenta,
+        Long precioOferta,
         BigDecimal costoProduccionTotal,
         String imagenUrl,
         boolean disponible,

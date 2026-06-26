@@ -25,12 +25,16 @@ public class ProductoInsumoMapper {
         if(dominio.id() == null){
             return new ProductoInsumoEntity(
                     insumoEntity,
-                    dominio.cantidad());
+                    dominio.cantidad(),
+                    dominio.permiteQuitar(),
+                    dominio.permiteAgregar());
         }else{
             return new ProductoInsumoEntity(
                     dominio.id(),
                     insumoEntity,
-                    dominio.cantidad());
+                    dominio.cantidad(),
+                    dominio.permiteQuitar(),
+                    dominio.permiteAgregar());
         }
 
     }
@@ -38,10 +42,12 @@ public class ProductoInsumoMapper {
     public ProductoInsumo toDominio(ProductoInsumoEntity entity){
         if(entity == null) return null;
 
-        return new ProductoInsumo(
+        return  ProductoInsumo.reconstruirProductoInsumo(
                 entity.getId(),
                 insumoMapper.toDominio(entity.getInsumo()),
-                entity.getCantidad()
+                entity.getCantidad(),
+                entity.isPermiteQuitar(),
+                entity.isPermiteAgregar()
         );
     }
 

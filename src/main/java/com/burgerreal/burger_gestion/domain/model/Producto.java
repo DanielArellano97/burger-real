@@ -11,6 +11,7 @@ public record Producto(
         String nombre,
         String descripcion,
         Long precioVenta,
+        Long precioOferta,
         BigDecimal costoProduccionTotal,
         String imagenUrl,
         boolean disponible,
@@ -20,7 +21,7 @@ public record Producto(
         List<ProductoVariante> variantes
 ) {
 
-    public static Producto crearProducto(String nombre, String descripcion, Long precioVenta,
+    public static Producto crearProducto(String nombre, String descripcion, Long precioVenta, Long precioOferta,
                            String imagenUrl, boolean disponible, boolean requiereCocina,
                                          CategoriaProducto categoria, List<ProductoInsumo> ingredientes,
                                          List<ProductoVariante> variantes){
@@ -33,7 +34,25 @@ public record Producto(
                 nombre,
                 descripcion,
                 precioVenta,
+                precioOferta,
                 costoCalculado,
+                imagenUrl,
+                disponible,
+                requiereCocina,
+                categoria,
+                ingredientes,
+                variantes
+        );
+    }
+
+    public Producto conPrecioOfertaModificado(Long nuevoPrecioOferta) {
+        return new Producto(
+                id,
+                nombre,
+                descripcion,
+                precioVenta,
+                nuevoPrecioOferta,
+                costoProduccionTotal,// 🌟 Aquí se setea el null
                 imagenUrl,
                 disponible,
                 requiereCocina,

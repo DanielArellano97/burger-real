@@ -31,7 +31,8 @@ public class RegistrarProductoService implements RegistrarProductoUseCase {
                     Insumo insumo = insumoRepositoryPort.buscarPorId(ingrediente.insumoId())
                             .orElseThrow(() -> new RuntimeException("Insumo con ID: " + ingrediente.insumoId() + " no encontrado"));
 
-                    return ProductoInsumo.crearProductoInsumo(insumo, ingrediente.cantidad());
+                    return ProductoInsumo.crearProductoInsumo(insumo, ingrediente.cantidad(),
+                            ingrediente.permiteQuitar(), ingrediente.permiteAgregar());
                 }).toList();
 
         List<ProductoVariante> variantes = command.variantes() != null ? command.variantes().stream()
@@ -47,6 +48,7 @@ public class RegistrarProductoService implements RegistrarProductoUseCase {
                 command.nombre(),
                 command.descripcion(),
                 command.precioVenta(),
+                command.precioOferta(),
                 command.imagenUrl(),
                 command.disponible(),
                 command.requiereCocina(),

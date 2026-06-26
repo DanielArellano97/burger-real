@@ -35,6 +35,7 @@ public class ProductoMapper {
         entity.setNombre(dominio.nombre());
         entity.setDescripcion(dominio.descripcion());
         entity.setPrecioVenta(dominio.precioVenta());
+        entity.setPrecioOferta(dominio.precioOferta());
         entity.setCostoProduccionTotal(dominio.costoProduccionTotal());
         entity.setImagenUrl(dominio.imagenUrl());
         entity.setDisponible(dominio.disponible());
@@ -45,7 +46,6 @@ public class ProductoMapper {
                 ? dominio.ingredientes().stream().map(productoInsumoMapper::toEntity).toList()
                 : Collections.emptyList());
 
-        // 🌟 Mapeamos las variantes asignándole el producto padre (Entity) para mantener la integridad referencial
         if (dominio.variantes() != null) {
             List<ProductoVarianteEntity> varianteEntities = dominio.variantes().stream()
                     .map(v -> {
@@ -69,6 +69,7 @@ public class ProductoMapper {
                 entity.getNombre(),
                 entity.getDescripcion(),
                 entity.getPrecioVenta(),
+                entity.getPrecioOferta(),
                 entity.getCostoProduccionTotal(),
                 entity.getImagenUrl(),
                 entity.isDisponible(),
@@ -79,7 +80,7 @@ public class ProductoMapper {
                         : Collections.emptyList(),
                 entity.getVariantes() != null
                         ? entity.getVariantes().stream().map(this::toVarianteDominio).toList()
-                        : Collections.emptyList() // 🌟 Fix completo para cargar del Dominio
+                        : Collections.emptyList()
         );
     }
 
@@ -88,24 +89,22 @@ public class ProductoMapper {
 
         return dominio.stream()
                 .map(p -> {
-                    // 🌟 Filtro inteligente: Solo las hamburguesas llevan la lista de ingredientes al modal
                     List<ResponseResumenProducto.IngredienteResumenDTO> ingredientesDTO =
                             (p.categoria() == CategoriaProducto.HAMBURGUESA)
                                     ? mapearIngredientes(p.ingredientes())
-                                    : Collections.emptyList(); // [] para papas, aros, bebidas, etc.
+                                    : Collections.emptyList();
 
-                    // 🌟 Mapeamos las variantes para el DTO resumido que usará Clau en el catálogo
                     List<ResponseResumenProducto.VarianteResumenDTO> variantesDTO =
                             (p.variantes() != null)
                                     ? p.variantes().stream().map(this::mapearVarianteDTO).toList()
                                     : Collections.emptyList();
 
-                    // 2. Instanciamos el DTO principal limpio
                     return new ResponseResumenProducto(
                             p.id(),
                             p.nombre(),
                             p.descripcion(),
                             p.precioVenta(),
+                            p.precioOferta(),
                             p.imagenUrl(),
                             p.categoria(),
                             p.disponible(),
@@ -117,65 +116,24 @@ public class ProductoMapper {
     }
 
     /**
-     * Metodo auxiliar encargado de transformar los insumos y calcular
-     * dinámicamente las reglas de interacción para el frontend.
+     * 🌟 SE LIMPIÓ EL MALDITO: Ahora sólo transporta los booleanos puros
+     * que configuraste directamente en tu base de datos.
      */
     private List<ResponseResumenProducto.IngredienteResumenDTO> mapearIngredientes(List<ProductoInsumo> ingredientes) {
         if (ingredientes == null) return Collections.emptyList();
 
         return ingredientes.stream()
-                // El packaging se va siempre, no va al catálogo de cara al cliente
                 .filter(i -> i.insumo().categoria() != CategoriaInsumo.PACKAGING)
-                .map(i -> {
-                    String nombreLower = i.insumo().nombre().toLowerCase();
-
-                    // 🌟 Extraemos el flag de la base de datos a través del objeto de dominio
-                    // Nota: Asegúrate de si en tu clase Insumo del dominio se llama esComercializableExtra() o getEsComercializableExtra()
-                    boolean esComercializable = i.insumo().esComercializadoraExtra();
-
-                    // Calculamos dinámicamente los permisos de los botones
-                    boolean permiteQuitar = definirPermiteQuitar(nombreLower);
-
-                    // 🌟 Le pasamos el flag al metodo encargado de la suma
-                    boolean permiteAgregar = definirPermiteAgregar(nombreLower, esComercializable);
-
-                    return new ResponseResumenProducto.IngredienteResumenDTO(
-                            i.insumo().id(),
-                            i.insumo().nombre(),
-                            i.insumo().valorExtra(),
-                            permiteQuitar,
-                            permiteAgregar
-                    );
-                })
+                .map(i -> new ResponseResumenProducto.IngredienteResumenDTO(
+                        i.insumo().id(),
+                        i.insumo().nombre(),
+                        i.insumo().valorExtra(),
+                        i.permiteQuitar(),  // 🌟 Directo del Dominio
+                        i.permiteAgregar() // 🌟 Directo del Dominio
+                ))
                 .toList();
     }
 
-    // 🧠 Reglas exclusivas para el botón de restar (-) en el modal
-    private boolean definirPermiteQuitar(String nombreInsumo) {
-        if (nombreInsumo.contains("pan") || nombreInsumo.contains("papas frita")) {
-            return false;
-        }
-        if (nombreInsumo.contains("medallón de carne") || nombreInsumo.contains("carne")) {
-            return false; // La carne base no se saca
-        }
-        return true; // Toppings y salsas sí se pueden quitar
-    }
-
-    // 🧠 Reglas exclusivas para el botón de sumar (+) en el modal
-// 🌟 Ahora recibe la configuración de la BD para bloquear las bebidas o deditos extras si están en false
-    private boolean definirPermiteAgregar(String nombreInsumo, boolean esComercializable) {
-        // 🔒 Candado de seguridad: Si en la BD dice que NO se vende como extra, se bloquea el "+" de inmediato
-        if (!esComercializable) {
-            return false;
-        }
-
-        if (nombreInsumo.contains("pan") || nombreInsumo.contains("papas frita")) {
-            return false; // No se pueden agregar más panes ni papas gratis desde aquí
-        }
-        return true; // Carne, quesos y salsas comerciales se pueden duplicar
-    }
-
-    // 🌟 Mapeador de Variante de Dominio a DTO de Respuesta para el Front
     private ResponseResumenProducto.VarianteResumenDTO mapearVarianteDTO(ProductoVariante v) {
         return new ResponseResumenProducto.VarianteResumenDTO(
                 v.id(),
@@ -185,17 +143,15 @@ public class ProductoMapper {
         );
     }
 
-    // 🌟 Mapeador de Variante Dominio a Entity
     private ProductoVarianteEntity toVarianteEntity(ProductoVariante dominio) {
         if (dominio == null) return null;
         return new ProductoVarianteEntity(
                 dominio.id(),
-            dominio.nombre(),
-            dominio.nombreCorto(),
-            dominio.precioExtra());
+                dominio.nombre(),
+                dominio.nombreCorto(),
+                dominio.precioExtra());
     }
 
-    // 🌟 Mapeador de Variante Entity a Dominio
     private ProductoVariante toVarianteDominio(ProductoVarianteEntity entity) {
         if (entity == null) return null;
         return new ProductoVariante(
@@ -214,6 +170,7 @@ public class ProductoMapper {
                 dominio.nombre(),
                 dominio.descripcion(),
                 dominio.precioVenta(),
+                dominio.precioOferta(),
                 dominio.costoProduccionTotal(),
                 dominio.imagenUrl(),
                 dominio.disponible(),
@@ -226,7 +183,7 @@ public class ProductoMapper {
         if (entities == null) return Collections.emptyList();
 
         return entities.stream()
-                .map(this::toDominio) // Reutiliza el metodo que ya escribiste
+                .map(this::toDominio)
                 .toList();
     }
 }

@@ -9,6 +9,7 @@ public record ResponseResumenProducto(
         String nombre,
         String descripcion,
         Long precioVenta,
+        Long precioOferta,
         String imagenUrl,
         CategoriaProducto categoria,
         boolean disponible,

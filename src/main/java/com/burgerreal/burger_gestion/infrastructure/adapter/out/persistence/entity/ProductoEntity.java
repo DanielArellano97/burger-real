@@ -24,6 +24,9 @@ public class ProductoEntity {
     @Column(name = "precio_venta", nullable = false)
     private Long precioVenta;
 
+    @Column(name = "precio_oferta")
+    private Long precioOferta;
+
     @Column(name = "costo_produccion_total", precision = 19, scale = 4)
     private BigDecimal costoProduccionTotal;
 
@@ -113,6 +116,14 @@ public class ProductoEntity {
 
     public void setPrecioVenta(Long precioVenta) {
         this.precioVenta = precioVenta;
+    }
+
+    public Long getPrecioOferta() {
+        return precioOferta;
+    }
+
+    public void setPrecioOferta(Long precioOferta) {
+        this.precioOferta = precioOferta;
     }
 
     public BigDecimal getCostoProduccionTotal() {

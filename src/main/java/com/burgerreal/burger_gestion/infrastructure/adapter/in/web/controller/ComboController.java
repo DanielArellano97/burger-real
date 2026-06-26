@@ -56,6 +56,7 @@ public class ComboController {
                 return new ComboDetalleResponse(
                         detalle.producto().id(),
                         detalle.producto().nombre(),
+                        detalle.cantidad(),
                         requiereSeleccion,
                         varianteSeleccionada,
                         opcionesDisponibles

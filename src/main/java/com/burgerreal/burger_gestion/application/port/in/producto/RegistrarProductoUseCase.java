@@ -12,6 +12,7 @@ public interface RegistrarProductoUseCase {
             String nombre,
             String descripcion,
             Long precioVenta,
+            Long precioOferta,
             String imagenUrl,
             boolean disponible,
             boolean requiereCocina,
@@ -22,7 +23,9 @@ public interface RegistrarProductoUseCase {
 
     record ItemReceta(
             Long insumoId,
-            Double cantidad
+            Double cantidad,
+            boolean permiteQuitar,
+            boolean permiteAgregar
     ){}
 
     // 🌟 Nuevo record auxiliar para capturar las variantes desde el Front/Controller
